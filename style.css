@@ -301,6 +301,9 @@ body::before {
     width: 18px;
     height: 18px;
     flex-shrink: 0;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 6px;
 }
 
 .mobile-menu-btn {
