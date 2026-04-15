@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EnrollSched</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <nav class="navbar" aria-label="Primary">
+        <div class="nav-container">
+            <a href="#home" class="nav-logo nav-logo-link" aria-label="EnrollSched home">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1e40af" stroke-width="2" aria-hidden="true">
+                    <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                    <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                </svg>
+                <span>EnrollSched</span>
+            </a>
+            
+            <div class="nav-links">
+                <a href="#home" class="active">Home</a>
+                <a href="#about">About</a>
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How It Works</a>
+            </div>
+
+            <div class="nav-actions">
+                <button type="button" class="btn btn-outline btn-nav">
+                    <svg class="btn-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                        <polyline points="10 17 15 12 10 7"/>
+                        <line x1="15" y1="12" x2="3" y2="12"/>
+                    </svg>
+                    Login
+                </button>
+                <button type="button" class="btn btn-primary btn-nav">
+                    <svg class="btn-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <line x1="19" y1="8" x2="19" y2="14"/>
+                        <line x1="22" y1="11" x2="16" y2="11"/>
+                    </svg>
+                    Sign Up
+                </button>
+            </div>
+
+            <button type="button" class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileNavMenu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <line x1="3" y1="12" x2="21" y2="12"/>
+                    <line x1="3" y1="6" x2="21" y2="6"/>
+                    <line x1="3" y1="18" x2="21" y2="18"/>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <section id="home" class="hero">
+        <div class="container">
+            <div class="hero-grid">
+                <div class="hero-content">
+                    <h1 class="hero-title">
+                        Skip the Long Line.<br>
+                        Pre-Register and Schedule<br>
+                        Your Enrollment Online.
+                    </h1>
+                    <p class="hero-description">
+                        Avoid hours of waiting during enrollment season. Pre-register your details, 
+                        choose an available time slot, and arrive on campus only when it's your turn. 
+                        Make enrollment faster, organized, and stress-free.
+                    </p>
+                    <div class="hero-buttons">
+                        <button class="btn btn-primary btn-lg">Get Started</button>
+                        <button class="btn btn-secondary btn-lg">Learn More</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="section problem-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">The Problem We Are Solving</h2>
+                <p class="section-subtitle">Every enrollment period, students face the same frustrating challenges.</p>
+            </div>
+
+            <div class="problem-grid">
+                <div class="problem-card">
+                    <div class="problem-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2">
+                            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                        </svg>
+                    </div>
+                    <h3>Long Waiting Queues</h3>
+                    <p>Students spend 3-5 hours standing in lines just to submit enrollment forms and process their documents.</p>
+                </div>
+
+                <div class="problem-card">
+                    <div class="problem-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                    </div>
+                    <h3>Wasted Time</h3>
+                    <p>Entire days are lost waiting instead of attending classes, studying, or doing other important activities.</p>
+                </div>
+
+                <div class="problem-card">
+                    <div class="problem-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#a16207" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                            <line x1="12" y1="9" x2="12" y2="13"/>
+                            <line x1="12" y1="17" x2="12.01" y2="17"/>
+                        </svg>
+                    </div>
+                    <h3>Overcrowded Campus</h3>
+                    <p>Halls and offices become congested creating an uncomfortable and stressful environment for everyone.</p>
+                </div>
+
+                <div class="problem-card">
+                    <div class="problem-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#a16207" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                    </div>
+                    <h3>Overloaded Staff</h3>
+                    <p>Administration staff get overwhelmed processing hundreds of students at once leading to errors and delays.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="section features-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">System Features</h2>
+                <p class="section-subtitle">Everything you need for a smooth enrollment experience.</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                    </div>
+                    <h3>Student Account</h3>
+                    <p>Secure login and registration system. Create your profile once and use it for every enrollment period.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                            <polyline points="10 9 9 9 8 9"/>
+                        </svg>
+                    </div>
+                    <h3>Pre-Registration Form</h3>
+                    <p>Complete all required enrollment information online before arriving. No more filling forms while waiting.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                            <line x1="16" y1="2" x2="16" y2="6"/>
+                            <line x1="8" y1="2" x2="8" y2="6"/>
+                            <line x1="3" y1="10" x2="21" y2="10"/>
+                        </svg>
+                    </div>
+                    <h3>Time Slot Selection</h3>
+                    <p>Choose from available appointment slots. See real-time availability and pick the schedule that works best for you.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                    </div>
+                    <h3>Admin Dashboard</h3>
+                    <p>Complete management interface for school administrators to monitor slots, manage capacity, and track students.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="how-it-works" class="section steps-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">How It Works</h2>
+                <p class="section-subtitle">Simple 4-step process for hassle-free enrollment.</p>
+            </div>
+
+            <div class="steps-container">
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <h3>Create an Account</h3>
+                    <p>Register with your student information and verify your account. This only takes a few minutes.</p>
+                </div>
+
+                <div class="step-divider"></div>
+
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <h3>Complete Pre-Registration</h3>
+                    <p>Fill out all required enrollment forms online. Review your information before submitting.</p>
+                </div>
+
+                <div class="step-divider"></div>
+
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <h3>Select Your Time Slot</h3>
+                    <p>Browse available appointment times and select the slot that fits your schedule best.</p>
+                </div>
+
+                <div class="step-divider"></div>
+
+                <div class="step-item">
+                    <div class="step-number">4</div>
+                    <h3>Receive Confirmation</h3>
+                    <p>Get your confirmation slip. Arrive on campus at your scheduled time for fast processing.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section benefits-section">
+        <div class="container">
+            <div class="benefits-grid">
+                <div class="benefit-item">
+                    <div class="benefit-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                    </div>
+                    <h4>Reduce Long Queues</h4>
+                    <p>Distribute student arrivals evenly throughout the day to eliminate crowding.</p>
+                </div>
+
+                <div class="benefit-item">
+                    <div class="benefit-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                    </div>
+                    <h4>Save Valuable Time</h4>
+                    <p>Spend minutes instead of hours for enrollment processing.</p>
+                </div>
+
+                <div class="benefit-item">
+                    <div class="benefit-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                    </div>
+                    <h4>Better Organization</h4>
+                    <p>Systematic approach removes chaos and improves efficiency for everyone.</p>
+                </div>
+
+                <div class="benefit-item">
+                    <div class="benefit-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                    </div>
+                    <h4>Manage Student Flow</h4>
+                    <p>Staff can handle the appropriate number of students at any given time.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-card">
+                <h2>Make your enrollment experience faster and more organized.</h2>
+                <p>Be one of the first students to use this system. Skip the lines and enroll stress-free.</p>
+                <button class="btn btn-white btn-lg">Start Pre-Registration Now</button>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2">
+                            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                            <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                        </svg>
+                        <span>EnrollSched</span>
+                    </div>
+                    <p>College Enrollment Pre-Registration and Scheduling System. Making enrollment faster and easier for everyone.</p>
+                </div>
+
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#how-it-works">How It Works</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-contact">
+                    <h4>Contact</h4>
+                    <p>College Administration Office</p>
+                    <p>123 Campus Avenue, City</p>
+                    <p>enrollment@college.edu</p>
+                    <p>+1 (234) 567-8900</p>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 EnrollSched. All rights reserved.</p>
+                <p class="footer-team">Developed by:</p>
+                <ul class="footer-team-list">
+                    <li>Joaquin, Reymond P.</li>
+                    <li>Dorado, Leo L.</li>
+                    <li>Hernandez, Luis Christian</li>
+                    <li>Malibago, Hans</li>
+                    <li>Siosan, Gabriel</li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+    <div class="mobile-nav-overlay" id="mobileNavOverlay" aria-hidden="true"></div>
+    <div class="mobile-nav-menu" id="mobileNavMenu" role="dialog" aria-modal="true" aria-label="Site menu" aria-hidden="true">
+        <div class="mobile-nav-header">
+            <div class="nav-logo">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1e40af" stroke-width="2" aria-hidden="true">
+                    <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                    <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                </svg>
+                <span>EnrollSched</span>
+            </div>
+            <button type="button" class="mobile-close-btn" id="mobileCloseBtn" aria-label="Close menu">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="mobile-nav-links-wrapper">
+            <a href="#home" class="active">Home</a>
+            <a href="#about">About</a>
+            <a href="#features">Features</a>
+            <a href="#how-it-works">How It Works</a>
+        </div>
+
+        <div class="mobile-nav-actions">
+            <button type="button" class="btn btn-outline btn-nav">
+                <svg class="btn-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                    <polyline points="10 17 15 12 10 7"/>
+                    <line x1="15" y1="12" x2="3" y2="12"/>
+                </svg>
+                Login
+            </button>
+            <button type="button" class="btn btn-primary btn-nav">
+                <svg class="btn-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <line x1="19" y1="8" x2="19" y2="14"/>
+                    <line x1="22" y1="11" x2="16" y2="11"/>
+                </svg>
+                Sign Up
+            </button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
