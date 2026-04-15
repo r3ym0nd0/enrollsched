@@ -120,6 +120,37 @@ body::before {
     background-color: var(--primary-50) !important;
 }
 
+.preview-section {
+    background-color: var(--primary-50) !important;
+}
+
+.cta-section {
+    background-color: #ffffff !important;
+}
+
+.preview-container {
+    max-width: 720px;
+    margin: 0 auto;
+    margin-top: var(--spacing-2xl);
+}
+
+.preview-placeholder {
+    background: var(--gray-50);
+    border: 2px dashed var(--gray-300);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-4xl) var(--spacing-xl);
+    text-align: center;
+    color: var(--gray-500);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.preview-placeholder svg {
+    opacity: 0.5;
+}
+
 .btn {
     display: inline-flex;
     align-items: center;
@@ -295,6 +326,8 @@ body::before {
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    min-height: 44px;
 }
 
 .btn-icon {
@@ -308,11 +341,11 @@ body::before {
 
 .mobile-menu-btn {
     display: none;
-    background: none;
-    border: none;
+    background: var(--primary-50);
+    border: 1px solid var(--primary-100);
     padding: var(--spacing-sm);
     cursor: pointer;
-    color: var(--gray-700);
+    color: var(--primary-700);
     border-radius: var(--radius-md);
 }
 
@@ -333,12 +366,6 @@ body::before {
     justify-content: center;
     overflow: hidden;
     position: relative;
-}
-
-@supports (height: 100svh) {
-    .hero {
-        min-height: 100svh;
-    }
 }
 
 @supports (height: 100svh) {
@@ -497,6 +524,11 @@ body::before {
     justify-content: center;
     opacity: 0;
     animation: heroFadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.7s;
+}
+
+.hero-buttons .btn {
+    min-width: 180px;
+    justify-content: center;
 }
 
 .hero-stats {
@@ -892,9 +924,16 @@ body::before {
     font-size: 1.0625rem;
 }
 
-.cta-card .btn-white {
+.cta-card .btn-primary {
     min-width: 240px;
+    background: white;
+    color: var(--primary-700);
     box-shadow: 0 12px 22px -18px rgba(15, 23, 42, 0.38);
+}
+
+.cta-card .btn-primary:hover {
+    background: var(--gray-50);
+    transform: translateY(-1px);
 }
 
 .contact-section {
@@ -1097,6 +1136,37 @@ body::before {
     padding: 0.125rem 0;
 }
 
+@media (max-width: 991px) {
+    .footer-grid {
+        grid-template-columns: 1fr !important;
+        gap: var(--spacing-2xl);
+        text-align: center;
+    }
+
+    .footer-brand,
+    .footer-links,
+    .footer-contact {
+        max-width: 480px;
+        margin: 0 auto;
+    }
+
+    .footer-logo {
+        justify-content: center;
+        flex-direction: column;
+    }
+
+    .footer-links ul,
+    .footer-contact {
+        text-align: center;
+    }
+}
+
+@media (max-width: 767px) {
+    .footer-grid {
+        gap: var(--spacing-xl);
+    }
+}
+
 .container {
     padding: 0 var(--spacing-md);
 }
@@ -1106,7 +1176,7 @@ body::before {
 }
 
 .hero {
-    padding: 120px 0 72px;
+    padding: 115px 0 72px;
 }
 
 .hero-title {
@@ -1190,7 +1260,7 @@ body::before {
     }
 
     .hero {
-        padding: 96px 0 56px;
+        padding: 115px 0 56px;
     }
 
     .hero-title {
@@ -1225,10 +1295,6 @@ body::before {
         grid-template-columns: 1fr 1fr;
     }
 
-    .footer-team-list {
-        columns: 2;
-    }
-
     .cta-card {
         padding: var(--spacing-3xl);
     }
@@ -1253,7 +1319,7 @@ body::before {
 
 @media (min-width: 1024px) {
     .hero {
-        padding: 96px 0 64px;
+        padding: 115px 0 64px;
     }
 
     .hero-content {
@@ -1316,11 +1382,13 @@ body::before {
     top: 0;
     right: -300px;
     width: 300px;
-    height: 100vh;
+    height: 100dvh;
+    min-height: 100%;
     background: rgba(255, 255, 255, 0.98);
     backdrop-filter: blur(20px);
-    z-index: 1000;
+    z-index: 99999;
     padding: 0;
+    margin: 0;
     box-shadow: -12px 0 40px rgba(15, 23, 42, 0.12);
     transition: right 350ms cubic-bezier(0.16, 1, 0.3, 1);
     border-left: 1px solid var(--gray-100);
@@ -1390,12 +1458,12 @@ body::before {
     position: absolute;
     top: var(--spacing-lg);
     right: var(--spacing-lg);
-    background: var(--gray-50);
-    border: none;
+    background: var(--primary-50);
+    border: 1px solid var(--primary-100);
     padding: var(--spacing-sm);
     border-radius: var(--radius-md);
     cursor: pointer;
-    color: var(--gray-600);
+    color: var(--primary-700);
     transition: all 150ms ease;
 }
 
