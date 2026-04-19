@@ -12,6 +12,40 @@ const requireStudent = require("./middleware/requireStudent");
 
 const app = express();
 const frontendPath = path.join(__dirname, "..", "..", "frontend");
+const isProduction = process.env.NODE_ENV === "production";
+const allowedOrigins = (process.env.FRONTEND_URL || "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+app.set("trust proxy", 1);
+
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  const isAllowedOrigin =
+    !origin ||
+    allowedOrigins.includes(origin) ||
+    (!isProduction && allowedOrigins.length === 0);
+
+  if (origin && isAllowedOrigin) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Vary", "Origin");
+  }
+
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  if (req.method === "OPTIONS") {
+    return isAllowedOrigin ? res.sendStatus(204) : res.sendStatus(403);
+  }
+
+  if (origin && !isAllowedOrigin) {
+    return res.status(403).json({ message: "Origin is not allowed." });
+  }
+
+  return next();
+});
 
 app.use(express.json());
 app.use(
@@ -22,8 +56,8 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      sameSite: "lax",
-      secure: false,
+      sameSite: isProduction ? "none" : "lax",
+      secure: isProduction,
       maxAge: 1000 * 60 * 60 * 2
     }
   })

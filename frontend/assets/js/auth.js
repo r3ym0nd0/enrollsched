@@ -53,7 +53,7 @@ function initStudentSignup() {
         submitButton.textContent = "Creating account...";
       }
 
-      const response = await fetch("/api/auth/signup", {
+      const response = await apiFetch("/api/auth/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -98,7 +98,7 @@ function initStudentLogin() {
         submitButton.textContent = "Logging in...";
       }
 
-      const response = await fetch("/api/auth/login", {
+      const response = await apiFetch("/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

@@ -1,0 +1,3 @@
+window.ENROLLSCHED_CONFIG = window.ENROLLSCHED_CONFIG || {
+  API_BASE_URL: ""
+};

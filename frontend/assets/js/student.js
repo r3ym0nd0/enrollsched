@@ -5,9 +5,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const logoutBtn = document.getElementById("studentLogoutBtn");
   const startRegistrationBtn = document.getElementById("startRegistrationBtn");
+  const logoutModalOverlay = document.getElementById("logoutModalOverlay");
+  const confirmLogoutBtn = document.querySelector("[data-confirm-logout]");
+  const cancelLogoutBtn = document.querySelector("[data-cancel-logout]");
 
   if (logoutBtn) {
-    logoutBtn.addEventListener("click", logoutStudent);
+    logoutBtn.addEventListener("click", openLogoutModal);
+  }
+
+  if (confirmLogoutBtn) {
+    confirmLogoutBtn.addEventListener("click", logoutStudent);
+  }
+
+  if (cancelLogoutBtn) {
+    cancelLogoutBtn.addEventListener("click", closeLogoutModal);
+  }
+
+  if (logoutModalOverlay) {
+    logoutModalOverlay.addEventListener("click", closeLogoutModal);
   }
 
   if (startRegistrationBtn) {
@@ -18,6 +33,12 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
   }
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      closeLogoutModal();
+    }
+  });
 });
 
 let availableSlots = [];
@@ -55,7 +76,7 @@ function initStudentSidebar() {
 
 async function checkStudentSession() {
   try {
-    const response = await fetch("/api/auth/me");
+    const response = await apiFetch("/api/auth/me");
 
     if (!response.ok) {
       window.location.href = "login.html";
@@ -108,11 +129,42 @@ function getInitials(name) {
 }
 
 async function logoutStudent() {
-  await fetch("/api/auth/logout", {
+  await apiFetch("/api/auth/logout", {
     method: "POST"
   });
 
   window.location.href = "login.html";
+}
+
+function openLogoutModal() {
+  const modal = document.getElementById("logoutModal");
+  const overlay = document.getElementById("logoutModalOverlay");
+  const confirmButton = document.querySelector("[data-confirm-logout]");
+
+  if (!modal || !overlay) return;
+
+  modal.classList.add("active");
+  overlay.classList.add("active");
+  modal.setAttribute("aria-hidden", "false");
+  overlay.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+
+  if (confirmButton) {
+    confirmButton.focus();
+  }
+}
+
+function closeLogoutModal() {
+  const modal = document.getElementById("logoutModal");
+  const overlay = document.getElementById("logoutModalOverlay");
+
+  if (!modal || !overlay || !modal.classList.contains("active")) return;
+
+  modal.classList.remove("active");
+  overlay.classList.remove("active");
+  modal.setAttribute("aria-hidden", "true");
+  overlay.setAttribute("aria-hidden", "true");
+  document.body.style.overflow = "";
 }
 
 async function initPreRegistration() {
@@ -132,7 +184,7 @@ async function loadTimeSlots() {
   const availableSlotsStat = document.getElementById("availableSlotsStat");
 
   try {
-    const response = await fetch("/api/time-slots");
+    const response = await apiFetch("/api/time-slots");
     const data = await response.json();
 
     if (!response.ok) {
@@ -230,7 +282,7 @@ function renderTimeSlotCards(slotGrid, slots) {
 
 async function loadMyPreRegistration() {
   try {
-    const response = await fetch("/api/pre-registrations/me");
+    const response = await apiFetch("/api/pre-registrations/me");
     const data = await response.json();
 
     if (!response.ok) {
@@ -264,7 +316,7 @@ async function submitPreRegistration(event) {
     }
 
     const isUpdate = Boolean(currentRegistration);
-    const response = await fetch(isUpdate ? "/api/pre-registrations/me" : "/api/pre-registrations", {
+    const response = await apiFetch(isUpdate ? "/api/pre-registrations/me" : "/api/pre-registrations", {
       method: isUpdate ? "PUT" : "POST",
       headers: {
         "Content-Type": "application/json"

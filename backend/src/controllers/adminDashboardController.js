@@ -44,7 +44,7 @@ async function getAdminDashboard(req, res) {
           FROM pre_registrations pr
           INNER JOIN students s ON s.id = pr.student_id
           ORDER BY pr.created_at DESC
-          LIMIT 10
+          LIMIT 100
         `),
         db.execute(`
           SELECT

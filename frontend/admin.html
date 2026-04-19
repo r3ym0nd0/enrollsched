@@ -11,7 +11,7 @@
 <body>
 
     <nav class="admin-navbar">
-        <button class="mobile-menu-btn" id="sidebarToggleBtn">
+        <button class="mobile-menu-btn" id="sidebarToggleBtn" aria-label="Open sidebar menu" aria-expanded="false" aria-controls="sidebar">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="3" y1="12" x2="21" y2="12"/>
                 <line x1="3" y1="6" x2="21" y2="6"/>
@@ -19,43 +19,51 @@
             </svg>
         </button>
 
-        <div class="admin-nav-logo">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1e40af" stroke-width="2">
-                <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-                <path d="M6 12v5c3 3 9 3 12 0v-5"/>
-            </svg>
-            <span>EnrollSched</span>
-        </div>
-
         <div class="admin-nav-right">
-            <div class="admin-role-badge">System Administrator</div>
-            
-            <div class="admin-profile">
-                <div class="admin-avatar">AD</div>
-                <span id="adminName">Admin User</span>
+            <div class="admin-nav-status">
+                <div class="admin-current-view" id="adminCurrentView">
+                    <span class="admin-current-dot"></span>
+                    <span>Overview</span>
+                </div>
+                <div class="admin-date-pill" id="adminDatePill">Today</div>
             </div>
-
-            <button class="btn btn-outline btn-sm" id="adminLogoutBtn">Logout</button>
         </div>
     </nav>
 
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar" aria-label="Admin navigation menu">
+        <div class="sidebar-brand">
+            <div class="sidebar-brand-mark">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1e40af" stroke-width="2">
+                    <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                    <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                </svg>
+                <span>EnrollSched</span>
+            </div>
+
+            <button type="button" class="sidebar-close-btn" id="sidebarCloseBtn" aria-label="Close sidebar menu">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+        </div>
+
         <ul class="sidebar-menu">
             <li class="sidebar-item">
-                <a href="#" class="sidebar-link active">
+                <a href="#dashboardOverview" class="sidebar-link active" data-section-link>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="3" y="3" width="7" height="7" rx="1"/>
                         <rect x="14" y="3" width="7" height="7" rx="1"/>
                         <rect x="14" y="14" width="7" height="7" rx="1"/>
                         <rect x="3" y="14" width="7" height="7" rx="1"/>
                     </svg>
-                    Dashboard
+                    Overview
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="#" class="sidebar-link">
+                <a href="#preRegistrationsSection" class="sidebar-link" data-section-link>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                         <polyline points="14 2 14 8 20 8"/>
@@ -66,18 +74,18 @@
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="#" class="sidebar-link">
+                <a href="#recordsSection" class="sidebar-link" data-section-link>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                        <line x1="16" y1="2" x2="16" y2="6"/>
-                        <line x1="8" y1="2" x2="8" y2="6"/>
-                        <line x1="3" y1="10" x2="21" y2="10"/>
+                        <path d="M4 4h16v16H4z"/>
+                        <path d="M8 8h8"/>
+                        <path d="M8 12h8"/>
+                        <path d="M8 16h5"/>
                     </svg>
-                    Time Slots
+                    Records
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="#" class="sidebar-link">
+                <a href="#studentsSection" class="sidebar-link" data-section-link>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
                         <circle cx="9" cy="7" r="4"/>
@@ -87,114 +95,209 @@
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="#" class="sidebar-link">
+                <a href="#timeSlotsSection" class="sidebar-link" data-section-link>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="18" y1="20" x2="18" y2="10"/>
-                        <line x1="12" y1="20" x2="12" y2="4"/>
-                        <line x1="6" y1="20" x2="6" y2="14"/>
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6"/>
+                        <line x1="8" y1="2" x2="8" y2="6"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
                     </svg>
-                    Reports
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="#" class="sidebar-link">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="3"/>
-                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-                    </svg>
-                    Settings
+                    Time Slots
                 </a>
             </li>
         </ul>
+
+        <div class="sidebar-footer">
+            <div class="admin-profile">
+                <div class="admin-avatar">AD</div>
+                <div class="admin-profile-info">
+                    <span id="adminName">Admin User</span>
+                    <small><span class="admin-status-dot"></span>Signed in</small>
+                </div>
+            </div>
+
+            <button class="btn btn-outline btn-sm" id="adminLogoutBtn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+                Logout
+            </button>
+        </div>
     </aside>
 
     <main class="main-content">
-        <div class="page-header">
-            <h1 class="page-title">Dashboard Overview</h1>
-            <p class="page-subtitle">Welcome back, Administrator. Here's what's happening with enrollments today.</p>
-        </div>
+        <section class="admin-view active" id="dashboardOverview">
+            <div class="page-header">
+                <h1 class="page-title">Enrollment Overview</h1>
+                <p class="page-subtitle">Welcome back, Administrator. Here's what's happening with enrollments today.</p>
+            </div>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-header">
-                    <div class="stat-icon">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                            <circle cx="9" cy="7" r="4"/>
-                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                        </svg>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="stat-number" id="totalStudentsStat">--</div>
+                    <div class="stat-label">Students</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="stat-number" id="totalPreRegistrationsStat">--</div>
+                    <div class="stat-label">Pre-Registrations</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                                <line x1="16" y1="2" x2="16" y2="6"/>
+                                <line x1="8" y1="2" x2="8" y2="6"/>
+                                <line x1="3" y1="10" x2="21" y2="10"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="stat-number" id="availableSlotsStat">--</div>
+                    <div class="stat-label">Available Slots</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polyline points="12 6 12 12 16 14"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="stat-number" id="fullSlotsStat">--</div>
+                    <div class="stat-label">Full Slots</div>
+                </div>
+            </div>
+
+            <div class="overview-grid">
+                <div class="overview-card overview-card-large">
+                    <div class="overview-card-header">
+                        <div>
+                            <h2>Recent Activity</h2>
+                            <p>Latest student pre-registration requests.</p>
+                        </div>
+                    </div>
+                    <div class="overview-list" id="overviewRecentActivity">
+                        <div class="overview-empty">Loading recent activity...</div>
                     </div>
                 </div>
-                <div class="stat-number" id="totalStudentsStat">--</div>
-                <div class="stat-label">Total Registered Students</div>
-            </div>
 
-            <div class="stat-card">
-                <div class="stat-header">
-                    <div class="stat-icon">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                            <polyline points="14 2 14 8 20 8"/>
-                        </svg>
+                <div class="overview-card">
+                    <div class="overview-card-header">
+                        <div>
+                            <h2>Next Available Slots</h2>
+                            <p>Quick options for queue scheduling.</p>
+                        </div>
+                    </div>
+                    <div class="overview-list" id="overviewAvailableSlots">
+                        <div class="overview-empty">Loading time slots...</div>
                     </div>
                 </div>
-                <div class="stat-number" id="totalPreRegistrationsStat">--</div>
-                <div class="stat-label">Total Pre-Registrations</div>
-            </div>
 
-            <div class="stat-card">
-                <div class="stat-header">
-                    <div class="stat-icon">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                            <line x1="16" y1="2" x2="16" y2="6"/>
-                            <line x1="8" y1="2" x2="8" y2="6"/>
-                            <line x1="3" y1="10" x2="21" y2="10"/>
-                        </svg>
+                <div class="overview-card">
+                    <div class="overview-card-header">
+                        <div>
+                            <h2>Queue Summary</h2>
+                            <p>What staff should prioritize.</p>
+                        </div>
+                    </div>
+                    <div class="queue-summary-list" id="overviewQueueSummary">
+                        <div class="overview-empty">Loading queue summary...</div>
                     </div>
                 </div>
-                <div class="stat-number" id="availableSlotsStat">--</div>
-                <div class="stat-label">Available Time Slots</div>
-            </div>
 
-            <div class="stat-card">
-                <div class="stat-header">
-                    <div class="stat-icon">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"/>
-                            <polyline points="12 6 12 12 16 14"/>
-                        </svg>
+                <div class="overview-card">
+                    <div class="overview-card-header">
+                        <div>
+                            <h2>Enrollment Readiness</h2>
+                            <p>Checklist completion before onsite visit.</p>
+                        </div>
+                    </div>
+                    <div class="readiness-panel" id="overviewReadiness">
+                        <div class="overview-empty">Loading readiness data...</div>
                     </div>
                 </div>
-                <div class="stat-number" id="fullSlotsStat">--</div>
-                <div class="stat-label">Full Time Slots</div>
             </div>
-        </div>
+        </section>
 
-        <section class="dashboard-section">
-            <div class="section-header">
-                <h2 class="section-title">Recent Pre-Registrations</h2>
-                <button class="btn btn-primary btn-sm">View All</button>
+        <section class="admin-view dashboard-section" id="preRegistrationsSection" hidden>
+            <div class="page-header">
+                <h1 class="page-title">Pre-Registrations</h1>
+                <p class="page-subtitle">Review pending student requests, verify readiness, and manage enrollment schedule status.</p>
             </div>
 
-            <div class="card">
+            <div class="card pre-registration-card">
+                <div class="table-toolbar pre-registration-toolbar">
+                    <label class="table-search" for="registrationSearchInput">
+                        <span>Search pre-registrations</span>
+                        <div class="table-search-field">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                            </svg>
+                            <input type="search" id="registrationSearchInput" placeholder="Search name, ID, course, slot...">
+                        </div>
+                    </label>
+
+                    <label class="table-filter" for="registrationSortSelect">
+                        <span>Sort by</span>
+                        <select id="registrationSortSelect">
+                            <option value="newest">Newest first</option>
+                            <option value="oldest">Oldest first</option>
+                            <option value="slot">Slot time</option>
+                        </select>
+                    </label>
+
+                    <div class="table-count-pill" aria-live="polite">
+                        <span>Pending</span>
+                        <strong id="pendingRequestsCount">--</strong>
+                    </div>
+                </div>
+
                 <div class="table-wrapper">
                     <table class="data-table">
                         <thead>
                             <tr>
                                 <th>Student Name</th>
+                                <th>Student ID</th>
                                 <th>Course</th>
                                 <th>Year Level</th>
                                 <th>Selected Time Slot</th>
                                 <th>Expected Amount</th>
-                                <th>Requirements</th>
-                                <th>Fee Notice</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
                         <tbody id="registrationsTableBody">
                             <tr>
-                                <td colspan="8">Loading recent pre-registrations...</td>
+                                <td class="table-state-cell" colspan="7">
+                                    <div class="table-state is-loading">
+                                        <span class="table-state-spinner"></span>
+                                        <strong>Loading pre-registrations</strong>
+                                        <p>Please wait while we fetch pending requests.</p>
+                                    </div>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -202,16 +305,165 @@
             </div>
         </section>
 
-        <section class="dashboard-section">
-            <div class="section-header">
-                <h2 class="section-title">Available Time Slots</h2>
-                <button class="btn btn-primary btn-sm" disabled>Slots from Database</button>
+        <section class="admin-view dashboard-section" id="recordsSection" hidden>
+            <div class="page-header">
+                <h1 class="page-title">Records</h1>
+                <p class="page-subtitle">View processed pre-registration requests that were approved, rejected, or cancelled.</p>
             </div>
 
-            <div class="timeslot-grid" id="adminTimeSlotGrid">
-                <div class="timeslot-card">
-                    <div class="timeslot-time">Loading time slots...</div>
-                    <div class="timeslot-count">Please wait</div>
+            <div class="card records-card">
+                <div class="table-toolbar records-toolbar">
+                    <label class="table-search" for="recordsSearchInput">
+                        <span>Search records</span>
+                        <div class="table-search-field">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                            </svg>
+                            <input type="search" id="recordsSearchInput" placeholder="Search name, ID, course, slot...">
+                        </div>
+                    </label>
+
+                    <label class="table-filter" for="recordsStatusFilter">
+                        <span>Record Status</span>
+                        <select id="recordsStatusFilter">
+                            <option value="all">All processed</option>
+                            <option value="approved">Approved</option>
+                            <option value="rejected">Rejected</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                    </label>
+
+                    <label class="table-filter" for="recordsSortSelect">
+                        <span>Sort by</span>
+                        <select id="recordsSortSelect">
+                            <option value="newest">Newest first</option>
+                            <option value="oldest">Oldest first</option>
+                            <option value="slot">Slot time</option>
+                        </select>
+                    </label>
+
+                    <div class="table-count-pill" aria-live="polite">
+                        <span>Shown</span>
+                        <strong id="recordsShownCount">--</strong>
+                    </div>
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="data-table records-table">
+                        <thead>
+                            <tr>
+                                <th>Student Name</th>
+                                <th>Student ID</th>
+                                <th>Course</th>
+                                <th>Year Level</th>
+                                <th>Selected Time Slot</th>
+                                <th>Expected Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recordsTableBody">
+                            <tr>
+                                <td class="table-state-cell" colspan="7">
+                                    <div class="table-state is-loading">
+                                        <span class="table-state-spinner"></span>
+                                        <strong>Loading records</strong>
+                                        <p>Please wait while we fetch processed requests.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section class="admin-view dashboard-section" id="studentsSection" hidden>
+            <div class="page-header">
+                <h1 class="page-title">Students</h1>
+                <p class="page-subtitle">View student profiles connected to pre-registration requests and their latest selected schedule.</p>
+            </div>
+
+            <div class="card students-card">
+                <div class="table-toolbar students-toolbar">
+                    <label class="table-search" for="studentSearchInput">
+                        <span>Search students</span>
+                        <div class="table-search-field">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                            </svg>
+                            <input type="search" id="studentSearchInput" placeholder="Search name, ID, course, slot...">
+                        </div>
+                    </label>
+
+                    <label class="table-filter" for="studentCourseFilter">
+                        <span>Course</span>
+                        <select id="studentCourseFilter">
+                            <option value="all">All courses</option>
+                        </select>
+                    </label>
+
+                    <label class="table-filter" for="studentYearFilter">
+                        <span>Year Level</span>
+                        <select id="studentYearFilter">
+                            <option value="all">All years</option>
+                        </select>
+                    </label>
+
+                    <div class="table-count-pill" aria-live="polite">
+                        <span>Shown</span>
+                        <strong id="studentsShownCount">--</strong>
+                    </div>
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="data-table student-table">
+                        <thead>
+                            <tr>
+                                <th>Student Name</th>
+                                <th>Student ID</th>
+                                <th>Course</th>
+                                <th>Year Level</th>
+                                <th>Latest Slot</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentsTableBody">
+                            <tr>
+                                <td class="table-state-cell" colspan="5">
+                                    <div class="table-state is-loading">
+                                        <span class="table-state-spinner"></span>
+                                        <strong>Loading students</strong>
+                                        <p>Please wait while we prepare the student list.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section class="admin-view dashboard-section" id="timeSlotsSection" hidden>
+            <div class="page-header">
+                <h1 class="page-title">Time Slots</h1>
+                <p class="page-subtitle">Monitor booking capacity from 8:00 AM to 5:00 PM, adjust student limits, and keep lunch break unavailable for appointments.</p>
+            </div>
+
+            <div class="timeslot-board">
+                <div class="timeslot-board-header">
+                    <div>
+                        <h2>Schedule Capacity</h2>
+                        <p>Capacity edits update the available choices students see during pre-registration.</p>
+                    </div>
+                    <span>Database controlled</span>
+                </div>
+
+                <div class="timeslot-grid" id="adminTimeSlotGrid">
+                    <div class="timeslot-card">
+                        <div class="timeslot-time">Loading time slots...</div>
+                        <div class="timeslot-count">Please wait</div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -221,6 +473,29 @@
     <div class="review-modal-overlay" id="reviewModalOverlay" aria-hidden="true"></div>
     <aside class="review-panel" id="reviewPanel" role="dialog" aria-modal="true" aria-label="Admin review" aria-hidden="true"></aside>
 
+    <div class="logout-modal-overlay" id="logoutModalOverlay" aria-hidden="true"></div>
+    <section class="logout-modal" id="logoutModal" role="dialog" aria-modal="true" aria-labelledby="logoutModalTitle" aria-hidden="true">
+        <div class="logout-modal-card">
+            <div class="logout-modal-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+            </div>
+            <div>
+                <h2 id="logoutModalTitle">Log out of admin?</h2>
+                <p>Your current dashboard session will end and you will need to sign in again.</p>
+            </div>
+            <div class="logout-modal-actions">
+                <button class="btn btn-outline btn-sm" type="button" data-cancel-logout>Cancel</button>
+                <button class="btn btn-primary btn-sm" type="button" data-confirm-logout>Log Out</button>
+            </div>
+        </div>
+    </section>
+
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/api.js"></script>
     <script src="assets/js/admin.js"></script>
 
 </body>
