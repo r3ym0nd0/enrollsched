@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard | EnrollSched</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/admin.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -32,10 +32,10 @@
             
             <div class="admin-profile">
                 <div class="admin-avatar">AD</div>
-                <span>Admin User</span>
+                <span id="adminName">Admin User</span>
             </div>
 
-            <button class="btn btn-outline btn-sm">Logout</button>
+            <button class="btn btn-outline btn-sm" id="adminLogoutBtn">Logout</button>
         </div>
     </nav>
 
@@ -125,7 +125,7 @@
                         </svg>
                     </div>
                 </div>
-                <div class="stat-number">1,247</div>
+                <div class="stat-number" id="totalStudentsStat">--</div>
                 <div class="stat-label">Total Registered Students</div>
             </div>
 
@@ -138,7 +138,7 @@
                         </svg>
                     </div>
                 </div>
-                <div class="stat-number">892</div>
+                <div class="stat-number" id="totalPreRegistrationsStat">--</div>
                 <div class="stat-label">Total Pre-Registrations</div>
             </div>
 
@@ -153,7 +153,7 @@
                         </svg>
                     </div>
                 </div>
-                <div class="stat-number">18</div>
+                <div class="stat-number" id="availableSlotsStat">--</div>
                 <div class="stat-label">Available Time Slots</div>
             </div>
 
@@ -166,7 +166,7 @@
                         </svg>
                     </div>
                 </div>
-                <div class="stat-number">6</div>
+                <div class="stat-number" id="fullSlotsStat">--</div>
                 <div class="stat-label">Full Time Slots</div>
             </div>
         </div>
@@ -186,37 +186,15 @@
                                 <th>Course</th>
                                 <th>Year Level</th>
                                 <th>Selected Time Slot</th>
+                                <th>Expected Amount</th>
+                                <th>Requirements</th>
+                                <th>Fee Notice</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="registrationsTableBody">
                             <tr>
-                                <td>John Michael Santos</td>
-                                <td>Bachelor of Science in IT</td>
-                                <td>1st Year</td>
-                                <td>April 15, 9:00 AM</td>
-                                <td><span class="status-badge status-approved">Approved</span></td>
-                            </tr>
-                            <tr>
-                                <td>Maria Cristina Reyes</td>
-                                <td>Bachelor of Science in CS</td>
-                                <td>2nd Year</td>
-                                <td>April 15, 10:30 AM</td>
-                                <td><span class="status-badge status-pending">Pending</span></td>
-                            </tr>
-                            <tr>
-                                <td>Robert James Cruz</td>
-                                <td>Bachelor in Information Systems</td>
-                                <td>3rd Year</td>
-                                <td>April 15, 1:00 PM</td>
-                                <td><span class="status-badge status-approved">Approved</span></td>
-                            </tr>
-                            <tr>
-                                <td>Anna Marie Bautista</td>
-                                <td>Bachelor of Science in IT</td>
-                                <td>4th Year</td>
-                                <td>April 16, 9:00 AM</td>
-                                <td><span class="status-badge status-pending">Pending</span></td>
+                                <td colspan="8">Loading recent pre-registrations...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -227,51 +205,23 @@
         <section class="dashboard-section">
             <div class="section-header">
                 <h2 class="section-title">Available Time Slots</h2>
-                <button class="btn btn-primary btn-sm">+ Add New Slot</button>
+                <button class="btn btn-primary btn-sm" disabled>Slots from Database</button>
             </div>
 
-            <div class="timeslot-grid">
+            <div class="timeslot-grid" id="adminTimeSlotGrid">
                 <div class="timeslot-card">
-                    <div class="timeslot-time">April 15, 9:00 AM - 10:00 AM</div>
-                    <div class="timeslot-count">32 / 40 students</div>
-                    <div class="timeslot-actions">
-                        <button class="btn btn-outline btn-sm">Edit</button>
-                        <button class="btn btn-outline btn-sm">Remove</button>
-                    </div>
-                </div>
-
-                <div class="timeslot-card">
-                    <div class="timeslot-time">April 15, 10:30 AM - 11:30 AM</div>
-                    <div class="timeslot-count">40 / 40 students</div>
-                    <div class="timeslot-actions">
-                        <button class="btn btn-outline btn-sm">View</button>
-                        <button class="btn btn-outline btn-sm">Full</button>
-                    </div>
-                </div>
-
-                <div class="timeslot-card">
-                    <div class="timeslot-time">April 15, 1:00 PM - 2:00 PM</div>
-                    <div class="timeslot-count">18 / 40 students</div>
-                    <div class="timeslot-actions">
-                        <button class="btn btn-outline btn-sm">Edit</button>
-                        <button class="btn btn-outline btn-sm">Remove</button>
-                    </div>
-                </div>
-
-                <div class="timeslot-card">
-                    <div class="timeslot-time">April 16, 9:00 AM - 10:00 AM</div>
-                    <div class="timeslot-count">7 / 40 students</div>
-                    <div class="timeslot-actions">
-                        <button class="btn btn-outline btn-sm">Edit</button>
-                        <button class="btn btn-outline btn-sm">Remove</button>
-                    </div>
+                    <div class="timeslot-time">Loading time slots...</div>
+                    <div class="timeslot-count">Please wait</div>
                 </div>
             </div>
         </section>
 
     </main>
 
-    <script src="admin.js"></script>
+    <div class="review-modal-overlay" id="reviewModalOverlay" aria-hidden="true"></div>
+    <aside class="review-panel" id="reviewPanel" role="dialog" aria-modal="true" aria-label="Admin review" aria-hidden="true"></aside>
+
+    <script src="assets/js/admin.js"></script>
 
 </body>
 </html>

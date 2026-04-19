@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard | EnrollSched</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/auth.css">
+    <link rel="stylesheet" href="assets/css/admin.css">
+    <link rel="stylesheet" href="assets/css/student.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <nav class="admin-navbar">
+        <button class="mobile-menu-btn" id="sidebarToggleBtn" aria-label="Open student menu">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="3" y1="12" x2="21" y2="12"/>
+                <line x1="3" y1="6" x2="21" y2="6"/>
+                <line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+        </button>
+
+        <div class="admin-nav-logo">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1e40af" stroke-width="2">
+                <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+            </svg>
+            <span>EnrollSched</span>
+        </div>
+
+        <div class="admin-nav-right">
+            <div class="admin-role-badge student-role-badge">Student Portal</div>
+
+            <div class="admin-profile">
+                <div class="admin-avatar" id="studentAvatar">ST</div>
+                <span id="studentName">Student</span>
+            </div>
+
+            <button class="btn btn-outline btn-sm" id="studentLogoutBtn">Logout</button>
+        </div>
+    </nav>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <aside class="sidebar">
+        <ul class="sidebar-menu">
+            <li class="sidebar-item">
+                <a href="#" class="sidebar-link active">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7" rx="1"/>
+                        <rect x="14" y="3" width="7" height="7" rx="1"/>
+                        <rect x="14" y="14" width="7" height="7" rx="1"/>
+                        <rect x="3" y="14" width="7" height="7" rx="1"/>
+                    </svg>
+                    Dashboard
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="#" class="sidebar-link">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                    </svg>
+                    Pre-Registration
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="#" class="sidebar-link">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6"/>
+                        <line x1="8" y1="2" x2="8" y2="6"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
+                    </svg>
+                    My Schedule
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="#" class="sidebar-link">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 11l3 3L22 4"/>
+                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                    </svg>
+                    Confirmation
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="#" class="sidebar-link">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                    Profile
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <main class="main-content student-main-content">
+        <div class="page-header student-page-header">
+            <div>
+                <p class="student-eyebrow">Enrollment queue helper</p>
+                <h1 class="page-title">Welcome back, <span id="studentFirstName">Student</span></h1>
+                <p class="page-subtitle">Complete your pre-registration, choose a time slot, and keep your enrollment schedule ready.</p>
+            </div>
+            <button class="btn btn-primary btn-sm" id="startRegistrationBtn">Start Pre-Registration</button>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="stat-number" id="registrationStatusStat">Not Started</div>
+                <div class="stat-label">Pre-Registration Status</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                            <line x1="16" y1="2" x2="16" y2="6"/>
+                            <line x1="8" y1="2" x2="8" y2="6"/>
+                            <line x1="3" y1="10" x2="21" y2="10"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="stat-number" id="availableSlotsStat">--</div>
+                <div class="stat-label">Available Time Slots</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="stat-number" id="selectedScheduleStat">--</div>
+                <div class="stat-label">Selected Schedule</div>
+            </div>
+        </div>
+
+        <section class="dashboard-section" id="preRegistrationSection">
+            <div class="student-dashboard-grid">
+                <div class="card student-action-card">
+                    <div class="card-body">
+                        <span class="status-badge status-pending">Next Step</span>
+                        <h2 class="section-title">Finish Your Pre-Registration</h2>
+                        <p>Fill out your course, year level, and preferred enrollment slot so you can avoid long queue waiting.</p>
+
+                        <form class="student-registration-form" id="preRegistrationForm">
+                            <div class="form-group">
+                                <label class="form-label" for="studentFullNameInput">Full Name</label>
+                                <input id="studentFullNameInput" type="text" class="form-input student-plain-input" placeholder="Student name" readonly>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="courseInput">Course</label>
+                                <select id="courseInput" name="course" class="form-input student-plain-input" required>
+                                    <option value="">Select course</option>
+                                    <option value="Bachelor of Science in Information Technology">BS Information Technology</option>
+                                    <option value="Bachelor of Science in Computer Science">BS Computer Science</option>
+                                    <option value="Bachelor of Science in Information Systems">BS Information Systems</option>
+                                    <option value="Bachelor of Science in Business Administration">BS Business Administration</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="yearLevelInput">Year Level</label>
+                                <select id="yearLevelInput" name="yearLevel" class="form-input student-plain-input" required>
+                                    <option value="">Select year level</option>
+                                    <option value="1st Year">1st Year</option>
+                                    <option value="2nd Year">2nd Year</option>
+                                    <option value="3rd Year">3rd Year</option>
+                                    <option value="4th Year">4th Year</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="timeSlotInput">Preferred Time Slot</label>
+                                <select id="timeSlotInput" name="timeSlotId" class="form-input student-plain-input" required>
+                                    <option value="">Loading time slots...</option>
+                                </select>
+                            </div>
+
+                            <div class="student-fee-notice">
+                                <strong>Minimum Initial Payment Reminder: ₱500</strong>
+                                <p>Please prepare at least ₱500 for your enrollment visit. This system does not collect payment online.</p>
+                                <div class="form-group">
+                                    <label class="form-label" for="expectedPaymentAmountInput">Expected Initial Payment Amount</label>
+                                    <input id="expectedPaymentAmountInput" name="expectedPaymentAmount" type="number" min="500" step="50" value="500" class="form-input student-plain-input" required>
+                                </div>
+                                <label class="form-checkbox student-fee-checkbox">
+                                    <input type="checkbox" name="feeAcknowledged" required>
+                                    <span>I understand that I need to prepare at least ₱500 during my scheduled enrollment visit.</span>
+                                </label>
+                            </div>
+
+                            <div class="student-requirements-notice">
+                                <strong>Enrollment Readiness Checklist</strong>
+                                <p>These reminders help prevent delays when you arrive at the enrollment area.</p>
+                                <label class="form-checkbox student-fee-checkbox">
+                                    <input type="checkbox" name="comAcknowledged" required>
+                                    <span>I will bring my Certificate of Matriculation (COM).</span>
+                                </label>
+                                <label class="form-checkbox student-fee-checkbox">
+                                    <input type="checkbox" name="balanceAcknowledged" required>
+                                    <span>I understand that unpaid tuition/installment balances must be settled at the cashier first.</span>
+                                </label>
+                                <label class="form-checkbox student-fee-checkbox">
+                                    <input type="checkbox" name="receiptAcknowledged" required>
+                                    <span>I will bring my tuition/payment receipt for verification.</span>
+                                </label>
+                            </div>
+
+                            <p class="auth-message student-form-message" id="preRegistrationMessage" role="alert"></p>
+
+                            <button class="btn btn-primary btn-full" type="submit">Submit Pre-Registration</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card student-timeline-card" id="confirmationCard">
+                    <div class="card-header">
+                        <h2 class="section-title">Booking Confirmation</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="student-empty-confirmation" id="emptyConfirmation">
+                            <p>No confirmed schedule yet.</p>
+                            <span>Submit the form to reserve your enrollment visit slot.</span>
+                        </div>
+
+                        <div class="student-confirmation-details" id="confirmationDetails" hidden>
+                            <div>
+                                <span>Status</span>
+                                <strong id="confirmationStatus">--</strong>
+                            </div>
+                            <div id="rejectionReasonRow" hidden>
+                                <span>Review Note</span>
+                                <strong id="confirmationRejectionReason">--</strong>
+                            </div>
+                            <div>
+                                <span>Course</span>
+                                <strong id="confirmationCourse">--</strong>
+                            </div>
+                            <div>
+                                <span>Year Level</span>
+                                <strong id="confirmationYearLevel">--</strong>
+                            </div>
+                            <div>
+                                <span>Schedule</span>
+                                <strong id="confirmationSchedule">--</strong>
+                            </div>
+                            <div>
+                                <span>Initial Payment Reminder</span>
+                                <strong id="confirmationFeeNotice">--</strong>
+                            </div>
+                            <div>
+                                <span>Expected Initial Payment</span>
+                                <strong id="confirmationExpectedPayment">--</strong>
+                            </div>
+                            <div>
+                                <span>Requirements</span>
+                                <strong id="confirmationRequirements">--</strong>
+                            </div>
+                            <div>
+                                <span>Post-Visit Reminder</span>
+                                <strong>Claim your updated COM after staff processing.</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="dashboard-section">
+            <div class="section-header">
+                <h2 class="section-title">Suggested Time Slots</h2>
+                <button class="btn btn-outline btn-sm">View All Slots</button>
+            </div>
+
+            <div class="timeslot-grid" id="timeSlotGrid">
+                <div class="timeslot-card">
+                    <div class="timeslot-time">Loading time slots...</div>
+                    <div class="timeslot-count">Please wait</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="assets/js/student.js"></script>
+
+</body>
+</html>

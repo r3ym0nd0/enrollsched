@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initMobileMenu();
     initAnimations();
     initButtonFeedback();
+    initPasswordToggles();
     console.log('✅ EnrollSched System Initialized');
 });
 
@@ -83,6 +84,11 @@ function initMobileMenu() {
     const closeBtn = document.getElementById('mobileCloseBtn');
     const overlay = document.getElementById('mobileNavOverlay');
     const menu = document.getElementById('mobileNavMenu');
+
+    if (!menu) {
+        return;
+    }
+
     const mobileLinks = menu.querySelectorAll('a');
 
     function openMenu() {
@@ -170,6 +176,23 @@ function initButtonFeedback() {
             setTimeout(() => {
                 this.classList.remove('is-pressed');
             }, 140);
+        });
+    });
+}
+
+function initPasswordToggles() {
+    document.querySelectorAll('[data-password-toggle]').forEach(toggle => {
+        toggle.addEventListener('click', function() {
+            const inputId = this.getAttribute('data-password-toggle');
+            const input = document.getElementById(inputId);
+
+            if (!input) return;
+
+            const willShow = input.type === 'password';
+            input.type = willShow ? 'text' : 'password';
+            this.classList.toggle('is-visible', willShow);
+            this.setAttribute('aria-pressed', String(willShow));
+            this.setAttribute('aria-label', willShow ? 'Hide password' : 'Show password');
         });
     });
 }

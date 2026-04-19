@@ -1,0 +1,223 @@
+.student-role-badge {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.student-main-content {
+    background:
+        radial-gradient(circle at top right, rgba(59, 130, 246, 0.08), transparent 28rem),
+        #f8fafc;
+}
+
+.student-page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--spacing-lg);
+}
+
+.student-eyebrow {
+    margin-bottom: var(--spacing-xs);
+    color: var(--primary-700);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.student-dashboard-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+    gap: var(--spacing-lg);
+}
+
+.student-action-card {
+    border-color: rgba(37, 99, 235, 0.18);
+    background:
+        linear-gradient(135deg, rgba(239, 246, 255, 0.92), rgba(255, 255, 255, 0.96)),
+        white;
+}
+
+.student-action-card .card-body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: var(--spacing-md);
+}
+
+.student-action-card p {
+    max-width: 560px;
+    color: var(--gray-600);
+    line-height: 1.7;
+}
+
+.student-registration-form {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--spacing-md);
+}
+
+.student-registration-form .btn-full,
+.student-form-message {
+    grid-column: 1 / -1;
+}
+
+.student-plain-input {
+    padding-left: var(--spacing-md);
+}
+
+.student-fee-notice,
+.student-requirements-notice {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
+    border: 1px solid #bfdbfe;
+    border-radius: var(--radius-xl);
+    background: #eff6ff;
+}
+
+.student-requirements-notice {
+    border-color: #bbf7d0;
+    background: #f0fdf4;
+}
+
+.student-fee-notice strong,
+.student-requirements-notice strong {
+    color: var(--primary-800);
+    font-size: 0.9375rem;
+}
+
+.student-requirements-notice strong {
+    color: #166534;
+}
+
+.student-fee-notice p,
+.student-requirements-notice p {
+    margin: 0;
+    color: var(--gray-600);
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.student-fee-checkbox {
+    align-items: flex-start;
+}
+
+.student-empty-confirmation {
+    display: grid;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-lg);
+    border: 1px dashed var(--gray-300);
+    border-radius: var(--radius-xl);
+    background: var(--gray-50);
+    color: var(--gray-600);
+}
+
+.student-empty-confirmation p {
+    margin: 0;
+    color: var(--gray-900);
+    font-weight: 700;
+}
+
+.student-empty-confirmation span {
+    font-size: 0.875rem;
+}
+
+.student-confirmation-details {
+    display: grid;
+    gap: var(--spacing-md);
+}
+
+.student-confirmation-details div {
+    display: grid;
+    gap: 0.25rem;
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--gray-100);
+}
+
+.student-confirmation-details div:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+}
+
+.student-confirmation-details span {
+    color: var(--gray-500);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.student-confirmation-details strong {
+    color: var(--gray-900);
+    font-size: 0.9375rem;
+}
+
+.timeslot-card.is-full {
+    opacity: 0.72;
+}
+
+.student-steps {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--spacing-md);
+}
+
+.student-steps li {
+    position: relative;
+    padding-left: 2rem;
+    color: var(--gray-600);
+    font-size: 0.9375rem;
+}
+
+.student-steps li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.1rem;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 9999px;
+    border: 2px solid var(--gray-300);
+    background: white;
+}
+
+.student-steps li.is-active {
+    color: var(--gray-900);
+    font-weight: 600;
+}
+
+.student-steps li.is-active::before {
+    border-color: var(--primary-600);
+    background: var(--primary-600);
+    box-shadow: 0 0 0 4px var(--primary-100);
+}
+
+@media (max-width: 900px) {
+    .student-page-header {
+        flex-direction: column;
+    }
+
+    .student-dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .student-registration-form {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .student-page-header .btn {
+        width: 100%;
+    }
+
+    .student-action-card .card-body {
+        min-height: auto;
+    }
+}
