@@ -60,7 +60,7 @@ SET @time_slot_column_exists = (
 SET @add_time_slot_column_sql = IF(
     @time_slot_column_exists = 0,
     'ALTER TABLE pre_registrations ADD COLUMN time_slot_id INT NULL AFTER student_id',
-    'SELECT "time_slot_id column already exists"'
+    'SELECT ''time_slot_id column already exists'''
 );
 
 PREPARE add_time_slot_column_stmt FROM @add_time_slot_column_sql;
@@ -78,7 +78,7 @@ SET @time_slot_fk_exists = (
 SET @add_time_slot_fk_sql = IF(
     @time_slot_fk_exists = 0,
     'ALTER TABLE pre_registrations ADD CONSTRAINT fk_pre_registrations_time_slot FOREIGN KEY (time_slot_id) REFERENCES time_slots(id) ON DELETE SET NULL',
-    'SELECT "time_slot_id foreign key already exists"'
+    'SELECT ''time_slot_id foreign key already exists'''
 );
 
 PREPARE add_time_slot_fk_stmt FROM @add_time_slot_fk_sql;
@@ -96,7 +96,7 @@ SET @fee_acknowledged_column_exists = (
 SET @add_fee_acknowledged_column_sql = IF(
     @fee_acknowledged_column_exists = 0,
     'ALTER TABLE pre_registrations ADD COLUMN fee_acknowledged BOOLEAN NOT NULL DEFAULT FALSE AFTER preferred_time_slot',
-    'SELECT "fee_acknowledged column already exists"'
+    'SELECT ''fee_acknowledged column already exists'''
 );
 
 PREPARE add_fee_acknowledged_column_stmt FROM @add_fee_acknowledged_column_sql;
@@ -114,7 +114,7 @@ SET @expected_payment_amount_column_exists = (
 SET @add_expected_payment_amount_column_sql = IF(
     @expected_payment_amount_column_exists = 0,
     'ALTER TABLE pre_registrations ADD COLUMN expected_payment_amount DECIMAL(10, 2) NOT NULL DEFAULT 500.00 AFTER preferred_time_slot',
-    'SELECT "expected_payment_amount column already exists"'
+    'SELECT ''expected_payment_amount column already exists'''
 );
 
 PREPARE add_expected_payment_amount_column_stmt FROM @add_expected_payment_amount_column_sql;
@@ -132,7 +132,7 @@ SET @com_acknowledged_column_exists = (
 SET @add_com_acknowledged_column_sql = IF(
     @com_acknowledged_column_exists = 0,
     'ALTER TABLE pre_registrations ADD COLUMN com_acknowledged BOOLEAN NOT NULL DEFAULT FALSE AFTER fee_acknowledged',
-    'SELECT "com_acknowledged column already exists"'
+    'SELECT ''com_acknowledged column already exists'''
 );
 
 PREPARE add_com_acknowledged_column_stmt FROM @add_com_acknowledged_column_sql;
@@ -150,7 +150,7 @@ SET @balance_acknowledged_column_exists = (
 SET @add_balance_acknowledged_column_sql = IF(
     @balance_acknowledged_column_exists = 0,
     'ALTER TABLE pre_registrations ADD COLUMN balance_acknowledged BOOLEAN NOT NULL DEFAULT FALSE AFTER com_acknowledged',
-    'SELECT "balance_acknowledged column already exists"'
+    'SELECT ''balance_acknowledged column already exists'''
 );
 
 PREPARE add_balance_acknowledged_column_stmt FROM @add_balance_acknowledged_column_sql;
@@ -168,7 +168,7 @@ SET @receipt_acknowledged_column_exists = (
 SET @add_receipt_acknowledged_column_sql = IF(
     @receipt_acknowledged_column_exists = 0,
     'ALTER TABLE pre_registrations ADD COLUMN receipt_acknowledged BOOLEAN NOT NULL DEFAULT FALSE AFTER balance_acknowledged',
-    'SELECT "receipt_acknowledged column already exists"'
+    'SELECT ''receipt_acknowledged column already exists'''
 );
 
 PREPARE add_receipt_acknowledged_column_stmt FROM @add_receipt_acknowledged_column_sql;
@@ -189,7 +189,7 @@ SET @rejection_reason_column_exists = (
 SET @add_rejection_reason_column_sql = IF(
     @rejection_reason_column_exists = 0,
     'ALTER TABLE pre_registrations ADD COLUMN rejection_reason VARCHAR(255) NULL AFTER status',
-    'SELECT "rejection_reason column already exists"'
+    'SELECT ''rejection_reason column already exists'''
 );
 
 PREPARE add_rejection_reason_column_stmt FROM @add_rejection_reason_column_sql;

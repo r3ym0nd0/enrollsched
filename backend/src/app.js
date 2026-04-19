@@ -67,7 +67,15 @@ app.get("/admin.html", requireAdmin, (req, res) => {
   res.sendFile(path.join(frontendPath, "admin.html"));
 });
 
+app.get("/admin", requireAdmin, (req, res) => {
+  res.sendFile(path.join(frontendPath, "admin.html"));
+});
+
 app.get("/student.html", requireStudent, (req, res) => {
+  res.sendFile(path.join(frontendPath, "student.html"));
+});
+
+app.get("/student", requireStudent, (req, res) => {
   res.sendFile(path.join(frontendPath, "student.html"));
 });
 
@@ -84,6 +92,18 @@ app.get("/health", (req, res) => {
 
 app.get("/", (req, res) => {
   res.sendFile(path.join(frontendPath, "index.html"));
+});
+
+app.get("/login", (req, res) => {
+  res.sendFile(path.join(frontendPath, "login.html"));
+});
+
+app.get("/signup", (req, res) => {
+  res.sendFile(path.join(frontendPath, "signup.html"));
+});
+
+app.get("/admin-login", (req, res) => {
+  res.sendFile(path.join(frontendPath, "admin-login.html"));
 });
 
 module.exports = app;

@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
         throw new Error(data.message || "Unable to login.");
       }
 
-      window.location.href = "admin.html";
+      window.location.href = "/admin";
     } catch (error) {
       message.textContent = error.message;
       message.classList.add("error");

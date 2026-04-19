@@ -229,7 +229,7 @@ async function checkAdminSession() {
         const response = await apiFetch('/api/auth/admin/me');
 
         if (!response.ok) {
-            window.location.href = 'admin-login.html';
+            window.location.href = '/admin-login';
             return;
         }
 
@@ -240,7 +240,7 @@ async function checkAdminSession() {
             adminName.textContent = data.admin.fullName;
         }
     } catch (error) {
-        window.location.href = 'admin-login.html';
+        window.location.href = '/admin-login';
     }
 }
 
@@ -249,7 +249,7 @@ async function logoutAdmin() {
         method: 'POST'
     });
 
-    window.location.href = 'admin-login.html';
+    window.location.href = '/admin-login';
 }
 
 function openLogoutModal() {
@@ -289,7 +289,7 @@ async function loadAdminDashboard() {
 
         if (!response.ok) {
             if (response.status === 401) {
-                window.location.href = 'admin-login.html';
+                window.location.href = '/admin-login';
                 return;
             }
 

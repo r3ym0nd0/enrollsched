@@ -79,7 +79,7 @@ async function checkStudentSession() {
     const response = await apiFetch("/api/auth/me");
 
     if (!response.ok) {
-      window.location.href = "login.html";
+      window.location.href = "/login";
       return;
     }
 
@@ -89,7 +89,7 @@ async function checkStudentSession() {
       renderStudentProfile(data.student);
     }
   } catch (error) {
-    window.location.href = "login.html";
+    window.location.href = "/login";
   }
 }
 
@@ -133,7 +133,7 @@ async function logoutStudent() {
     method: "POST"
   });
 
-  window.location.href = "login.html";
+  window.location.href = "/login";
 }
 
 function openLogoutModal() {

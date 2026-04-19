@@ -26,7 +26,7 @@ function getFormPayload(form) {
 }
 
 function redirectAfterStudentAuth() {
-  window.location.href = "student.html";
+  window.location.href = "/student";
 }
 
 function initStudentSignup() {
