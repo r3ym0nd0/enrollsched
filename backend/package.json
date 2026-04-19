@@ -1,0 +1,17 @@
+{
+  "name": "enrollsched-backend",
+  "version": "1.0.0",
+  "description": "Backend for the EnrollSched pre-registration and scheduling system",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "dotenv": "^17.4.2",
+    "express": "^4.22.1",
+    "express-session": "^1.19.0",
+    "mysql2": "^3.22.1"
+  }
+}
