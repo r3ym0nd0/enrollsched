@@ -1,6 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
   checkStudentSession();
   initStudentSidebar();
+  initStudentNotifications();
+  initStudentSearch();
   initPreRegistration();
   setStudentDatePill();
 
@@ -45,6 +47,8 @@ document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
       closeLogoutModal();
+      closeStudentNotifications();
+      closeStudentSearch();
     }
   });
 
@@ -60,6 +64,116 @@ document.addEventListener("DOMContentLoaded", () => {
 
 let availableSlots = [];
 let currentRegistration = null;
+
+function initStudentNotifications() {
+  const button = document.getElementById("studentNotificationBtn");
+  const panel = document.getElementById("studentNotificationPanel");
+
+  if (!button || !panel) return;
+
+  button.addEventListener("click", (event) => {
+    event.stopPropagation();
+    closeStudentSearch();
+    const isOpen = panel.classList.toggle("active");
+    panel.setAttribute("aria-hidden", String(!isOpen));
+    button.setAttribute("aria-expanded", String(isOpen));
+  });
+
+  panel.addEventListener("click", (event) => {
+    event.stopPropagation();
+  });
+
+  document.addEventListener("click", closeStudentNotifications);
+}
+
+function closeStudentNotifications() {
+  const button = document.getElementById("studentNotificationBtn");
+  const panel = document.getElementById("studentNotificationPanel");
+
+  if (!button || !panel || !panel.classList.contains("active")) return;
+
+  panel.classList.remove("active");
+  panel.setAttribute("aria-hidden", "true");
+  button.setAttribute("aria-expanded", "false");
+}
+
+function initStudentSearch() {
+  const wrapper = document.getElementById("studentSearchWrapper");
+  const toggle = document.getElementById("studentSearchToggle");
+  const input = document.getElementById("studentPortalSearch");
+
+  if (!wrapper || !toggle || !input) return;
+
+  toggle.addEventListener("click", (event) => {
+    event.stopPropagation();
+    const isOpen = wrapper.classList.toggle("active");
+    toggle.setAttribute("aria-expanded", String(isOpen));
+
+    if (isOpen) {
+      closeStudentNotifications();
+      setTimeout(() => input.focus(), 0);
+    }
+  });
+
+  wrapper.addEventListener("click", (event) => {
+    event.stopPropagation();
+  });
+
+  document.addEventListener("click", closeStudentSearch);
+
+  input.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter") return;
+    event.preventDefault();
+    handleStudentSearch(input.value);
+  });
+}
+
+function closeStudentSearch() {
+  const wrapper = document.getElementById("studentSearchWrapper");
+  const toggle = document.getElementById("studentSearchToggle");
+
+  if (!wrapper || !toggle || !wrapper.classList.contains("active")) return;
+
+  wrapper.classList.remove("active");
+  toggle.setAttribute("aria-expanded", "false");
+}
+
+function handleStudentSearch(query) {
+  const normalizedQuery = String(query || "").trim().toLowerCase();
+
+  if (!normalizedQuery) return;
+
+  if (["notification", "notifications", "update", "updates"].some((term) => normalizedQuery.includes(term))) {
+    closeStudentSearch();
+    document.getElementById("studentNotificationBtn")?.click();
+    return;
+  }
+
+  const registerTerms = ["register", "registration", "com", "receipt", "payment", "evidence", "form"];
+  const scheduleTerms = ["schedule", "slot", "time", "available", "availability", "full"];
+  const overviewTerms = ["overview", "home", "dashboard"];
+
+  if (registerTerms.some((term) => normalizedQuery.includes(term))) {
+    showStudentView("#preRegistrationSection");
+    setActiveStudentSectionLink(document.querySelector('[href="#preRegistrationSection"]'));
+    closeStudentSearch();
+    return;
+  }
+
+  if (scheduleTerms.some((term) => normalizedQuery.includes(term))) {
+    showStudentView("#studentScheduleSection");
+    setActiveStudentSectionLink(document.querySelector('[href="#studentScheduleSection"]'));
+    closeStudentSearch();
+    return;
+  }
+
+  if (overviewTerms.some((term) => normalizedQuery.includes(term))) {
+    showStudentView("#studentOverviewSection");
+    setActiveStudentSectionLink(document.querySelector('[href="#studentOverviewSection"]'));
+    closeStudentSearch();
+    return;
+  }
+}
 
 function initStudentSidebar() {
   const toggleBtn = document.getElementById("sidebarToggleBtn");
@@ -433,9 +547,30 @@ async function submitPreRegistration(event) {
 }
 
 function renderStudentOverview() {
+  renderStudentOverviewStats();
   renderStudentOverviewRegistration();
   renderStudentOverviewSlots();
   renderStudentOverviewReminder();
+}
+
+function renderStudentOverviewStats() {
+  const openSlotsCount = document.getElementById("studentOpenSlotsCount");
+  const seatsLeftCount = document.getElementById("studentSeatsLeftCount");
+  const minimumFeeCount = document.getElementById("studentMinimumFeeCount");
+  const proofsUploadedCount = document.getElementById("studentProofsUploadedCount");
+
+  const bookableSlots = availableSlots.filter((slot) => Boolean(slot.isActive) && !Boolean(slot.isBreak));
+  const openSlots = bookableSlots.filter((slot) => !Boolean(slot.isFull));
+  const seatsLeft = bookableSlots.reduce((total, slot) => total + Number(slot.remainingSlots || 0), 0);
+  const expectedPayment = Number(currentRegistration?.expectedPaymentAmount || 500);
+  const uploadedProofs = [currentRegistration?.comEvidencePath, currentRegistration?.receiptEvidencePath]
+    .filter(Boolean)
+    .length;
+
+  if (openSlotsCount) openSlotsCount.textContent = String(openSlots.length);
+  if (seatsLeftCount) seatsLeftCount.textContent = String(seatsLeft);
+  if (minimumFeeCount) minimumFeeCount.textContent = String(expectedPayment || 500);
+  if (proofsUploadedCount) proofsUploadedCount.textContent = String(uploadedProofs);
 }
 
 function renderStudentOverviewRegistration() {

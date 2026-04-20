@@ -74,6 +74,7 @@ async function getMyPreRegistration(req, res) {
 
     return res.json({ registration: registrations[0] || null });
   } catch (error) {
+    console.error("Failed to load student pre-registration:", error);
     return res.status(500).json({ message: "Unable to load your pre-registration." });
   }
 }
@@ -274,6 +275,7 @@ async function createPreRegistration(req, res) {
   } catch (error) {
     await connection.rollback();
     removeUploadedEvidence(req.files);
+    console.error("Failed to submit student pre-registration:", error);
     return res.status(500).json({ message: "Unable to submit pre-registration." });
   } finally {
     connection.release();
@@ -385,6 +387,7 @@ async function updateMyPreRegistration(req, res) {
   } catch (error) {
     await connection.rollback();
     removeUploadedEvidence(req.files);
+    console.error("Failed to update student pre-registration:", error);
     return res.status(500).json({ message: "Unable to update pre-registration." });
   } finally {
     connection.release();
