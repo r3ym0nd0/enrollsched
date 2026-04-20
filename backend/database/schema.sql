@@ -40,6 +40,8 @@ CREATE TABLE IF NOT EXISTS pre_registrations (
     com_acknowledged BOOLEAN NOT NULL DEFAULT FALSE,
     balance_acknowledged BOOLEAN NOT NULL DEFAULT FALSE,
     receipt_acknowledged BOOLEAN NOT NULL DEFAULT FALSE,
+    com_evidence_path VARCHAR(255) NULL,
+    receipt_evidence_path VARCHAR(255) NULL,
     status ENUM('pending', 'approved', 'rejected', 'cancelled', 'confirmed') DEFAULT 'pending',
     rejection_reason VARCHAR(255) NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -174,6 +176,42 @@ SET @add_receipt_acknowledged_column_sql = IF(
 PREPARE add_receipt_acknowledged_column_stmt FROM @add_receipt_acknowledged_column_sql;
 EXECUTE add_receipt_acknowledged_column_stmt;
 DEALLOCATE PREPARE add_receipt_acknowledged_column_stmt;
+
+SET @com_evidence_path_column_exists = (
+    SELECT COUNT(*)
+    FROM information_schema.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE()
+        AND TABLE_NAME = 'pre_registrations'
+        AND COLUMN_NAME = 'com_evidence_path'
+);
+
+SET @add_com_evidence_path_column_sql = IF(
+    @com_evidence_path_column_exists = 0,
+    'ALTER TABLE pre_registrations ADD COLUMN com_evidence_path VARCHAR(255) NULL AFTER receipt_acknowledged',
+    'SELECT ''com_evidence_path column already exists'''
+);
+
+PREPARE add_com_evidence_path_column_stmt FROM @add_com_evidence_path_column_sql;
+EXECUTE add_com_evidence_path_column_stmt;
+DEALLOCATE PREPARE add_com_evidence_path_column_stmt;
+
+SET @receipt_evidence_path_column_exists = (
+    SELECT COUNT(*)
+    FROM information_schema.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE()
+        AND TABLE_NAME = 'pre_registrations'
+        AND COLUMN_NAME = 'receipt_evidence_path'
+);
+
+SET @add_receipt_evidence_path_column_sql = IF(
+    @receipt_evidence_path_column_exists = 0,
+    'ALTER TABLE pre_registrations ADD COLUMN receipt_evidence_path VARCHAR(255) NULL AFTER com_evidence_path',
+    'SELECT ''receipt_evidence_path column already exists'''
+);
+
+PREPARE add_receipt_evidence_path_column_stmt FROM @add_receipt_evidence_path_column_sql;
+EXECUTE add_receipt_evidence_path_column_stmt;
+DEALLOCATE PREPARE add_receipt_evidence_path_column_stmt;
 
 ALTER TABLE pre_registrations
     MODIFY COLUMN status ENUM('pending', 'approved', 'rejected', 'cancelled', 'confirmed') DEFAULT 'pending';

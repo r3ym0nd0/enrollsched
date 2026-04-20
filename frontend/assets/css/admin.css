@@ -1471,6 +1471,51 @@ button.overview-list-item {
     gap: var(--spacing-md);
 }
 
+.review-evidence-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--spacing-md);
+}
+
+.review-evidence-item {
+    display: grid;
+    gap: 0.25rem;
+    padding: var(--spacing-md);
+    border: 1px solid rgba(37, 99, 235, 0.18);
+    border-radius: var(--radius-lg);
+    background: #f8fbff;
+    color: inherit;
+    text-decoration: none;
+}
+
+.review-evidence-item:hover {
+    border-color: var(--primary-500);
+    background: #eff6ff;
+}
+
+.review-evidence-item span {
+    color: var(--gray-500);
+    font-size: 0.7rem;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.review-evidence-item strong {
+    color: var(--primary-700);
+    font-size: 0.9rem;
+    font-weight: 800;
+}
+
+.review-evidence-item.is-empty {
+    border-color: var(--gray-200);
+    background: var(--gray-50);
+}
+
+.review-evidence-item.is-empty strong {
+    color: var(--gray-500);
+}
+
 .review-detail-grid div,
 .review-note {
     display: grid;
@@ -1916,7 +1961,8 @@ button.overview-list-item {
     }
 
     .review-summary-band,
-    .review-detail-grid {
+    .review-detail-grid,
+    .review-evidence-grid {
         grid-template-columns: 1fr;
     }
 

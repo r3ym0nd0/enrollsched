@@ -1,4 +1,12 @@
 const db = require("../config/db");
+const { getEvidencePath, removeUploadedEvidence } = require("../middleware/evidenceUpload");
+
+function getUploadedEvidencePaths(req) {
+  return {
+    comEvidencePath: getEvidencePath(req.files?.comEvidence?.[0]),
+    receiptEvidencePath: getEvidencePath(req.files?.receiptEvidence?.[0])
+  };
+}
 
 async function getSuggestedSlots(connection, excludedSlotId = null) {
   const params = [];
@@ -48,6 +56,8 @@ async function getMyPreRegistration(req, res) {
           pr.com_acknowledged AS comAcknowledged,
           pr.balance_acknowledged AS balanceAcknowledged,
           pr.receipt_acknowledged AS receiptAcknowledged,
+          pr.com_evidence_path AS comEvidencePath,
+          pr.receipt_evidence_path AS receiptEvidencePath,
           pr.status,
           pr.rejection_reason AS rejectionReason,
           pr.created_at AS createdAt,
@@ -168,8 +178,10 @@ async function getLockedAvailableSlot(connection, timeSlotId, existingRegistrati
 async function createPreRegistration(req, res) {
   const { course, yearLevel, timeSlotId, expectedPaymentAmount } = req.body;
   const validationMessage = validateRegistrationInput(req.body);
+  const { comEvidencePath, receiptEvidencePath } = getUploadedEvidencePaths(req);
 
   if (validationMessage) {
+    removeUploadedEvidence(req.files);
     return res.status(400).json({ message: validationMessage });
   }
 
@@ -191,6 +203,7 @@ async function createPreRegistration(req, res) {
 
     if (existingRegistrations.length > 0) {
       await connection.rollback();
+      removeUploadedEvidence(req.files);
       return res.status(409).json({
         message: "You already have an active pre-registration."
       });
@@ -200,6 +213,7 @@ async function createPreRegistration(req, res) {
 
     if (slotResult.errorPayload) {
       await connection.rollback();
+      removeUploadedEvidence(req.files);
       return res.status(slotResult.errorStatus).json(slotResult.errorPayload);
     }
 
@@ -218,10 +232,12 @@ async function createPreRegistration(req, res) {
           com_acknowledged,
           balance_acknowledged,
           receipt_acknowledged,
+          com_evidence_path,
+          receipt_evidence_path,
           status,
           rejection_reason
         )
-        VALUES (?, ?, ?, ?, ?, ?, TRUE, TRUE, TRUE, TRUE, 'pending', NULL)
+        VALUES (?, ?, ?, ?, ?, ?, TRUE, TRUE, TRUE, TRUE, ?, ?, 'pending', NULL)
       `,
       [
         req.session.student.id,
@@ -229,7 +245,9 @@ async function createPreRegistration(req, res) {
         course,
         yearLevel,
         slot.slotLabel,
-        Number(expectedPaymentAmount)
+        Number(expectedPaymentAmount),
+        comEvidencePath,
+        receiptEvidencePath
       ]
     );
 
@@ -247,12 +265,15 @@ async function createPreRegistration(req, res) {
         comAcknowledged: true,
         balanceAcknowledged: true,
         receiptAcknowledged: true,
+        comEvidencePath,
+        receiptEvidencePath,
         status: "pending",
         rejectionReason: null
       }
     });
   } catch (error) {
     await connection.rollback();
+    removeUploadedEvidence(req.files);
     return res.status(500).json({ message: "Unable to submit pre-registration." });
   } finally {
     connection.release();
@@ -262,8 +283,10 @@ async function createPreRegistration(req, res) {
 async function updateMyPreRegistration(req, res) {
   const { course, yearLevel, timeSlotId, expectedPaymentAmount } = req.body;
   const validationMessage = validateRegistrationInput(req.body);
+  const uploadedEvidencePaths = getUploadedEvidencePaths(req);
 
   if (validationMessage) {
+    removeUploadedEvidence(req.files);
     return res.status(400).json({ message: validationMessage });
   }
 
@@ -274,7 +297,7 @@ async function updateMyPreRegistration(req, res) {
 
     const [registrations] = await connection.execute(
       `
-        SELECT id
+        SELECT id, com_evidence_path AS comEvidencePath, receipt_evidence_path AS receiptEvidencePath
         FROM pre_registrations
         WHERE student_id = ?
           AND status IN ('pending', 'approved', 'confirmed', 'rejected')
@@ -289,6 +312,7 @@ async function updateMyPreRegistration(req, res) {
 
     if (!registration) {
       await connection.rollback();
+      removeUploadedEvidence(req.files);
       return res.status(404).json({ message: "No active pre-registration found to update." });
     }
 
@@ -296,10 +320,14 @@ async function updateMyPreRegistration(req, res) {
 
     if (slotResult.errorPayload) {
       await connection.rollback();
+      removeUploadedEvidence(req.files);
       return res.status(slotResult.errorStatus).json(slotResult.errorPayload);
     }
 
     const { slot } = slotResult;
+    const comEvidencePath = uploadedEvidencePaths.comEvidencePath || registration.comEvidencePath;
+    const receiptEvidencePath =
+      uploadedEvidencePaths.receiptEvidencePath || registration.receiptEvidencePath;
 
     await connection.execute(
       `
@@ -314,6 +342,8 @@ async function updateMyPreRegistration(req, res) {
           com_acknowledged = TRUE,
           balance_acknowledged = TRUE,
           receipt_acknowledged = TRUE,
+          com_evidence_path = ?,
+          receipt_evidence_path = ?,
           status = 'pending',
           rejection_reason = NULL
         WHERE id = ?
@@ -325,6 +355,8 @@ async function updateMyPreRegistration(req, res) {
         yearLevel,
         slot.slotLabel,
         Number(expectedPaymentAmount),
+        comEvidencePath,
+        receiptEvidencePath,
         registration.id,
         req.session.student.id
       ]
@@ -344,12 +376,15 @@ async function updateMyPreRegistration(req, res) {
         comAcknowledged: true,
         balanceAcknowledged: true,
         receiptAcknowledged: true,
+        comEvidencePath,
+        receiptEvidencePath,
         status: "pending",
         rejectionReason: null
       }
     });
   } catch (error) {
     await connection.rollback();
+    removeUploadedEvidence(req.files);
     return res.status(500).json({ message: "Unable to update pre-registration." });
   } finally {
     connection.release();

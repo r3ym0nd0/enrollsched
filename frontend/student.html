@@ -13,7 +13,7 @@
 <body>
 
     <nav class="admin-navbar">
-        <button class="mobile-menu-btn" id="sidebarToggleBtn" aria-label="Open student menu">
+        <button class="mobile-menu-btn" id="sidebarToggleBtn" aria-label="Open student menu" aria-expanded="false" aria-controls="studentSidebar">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="3" y1="12" x2="21" y2="12"/>
                 <line x1="3" y1="6" x2="21" y2="6"/>
@@ -21,61 +21,69 @@
             </svg>
         </button>
 
-        <div class="admin-nav-logo">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1e40af" stroke-width="2">
-                <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-                <path d="M6 12v5c3 3 9 3 12 0v-5"/>
-            </svg>
-            <span>EnrollSched</span>
-        </div>
-
         <div class="admin-nav-right">
-            <div class="admin-role-badge student-role-badge">Student Portal</div>
-
-            <div class="admin-profile">
-                <div class="admin-avatar" id="studentAvatar">ST</div>
-                <span id="studentName">Student</span>
+            <div class="admin-nav-status student-nav-status">
+                <div class="admin-current-view">
+                    <span class="admin-current-dot"></span>
+                    <span>Student Portal</span>
+                </div>
+                <div class="admin-date-pill" id="studentDatePill">Today</div>
             </div>
-
-            <button class="btn btn-outline btn-sm" id="studentLogoutBtn">Logout</button>
         </div>
     </nav>
 
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <aside class="sidebar">
+    <aside class="sidebar" id="studentSidebar" aria-label="Student navigation menu">
+        <div class="sidebar-brand">
+            <div class="sidebar-brand-mark">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1e40af" stroke-width="2">
+                    <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                    <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                </svg>
+                <span>EnrollSched</span>
+            </div>
+
+            <button type="button" class="sidebar-close-btn" id="sidebarCloseBtn" aria-label="Close student menu">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+        </div>
+
         <ul class="sidebar-menu">
             <li class="sidebar-item">
-                <a href="#" class="sidebar-link active">
+                <a href="#studentOverviewSection" class="sidebar-link active" data-student-section-link>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="3" y="3" width="7" height="7" rx="1"/>
                         <rect x="14" y="3" width="7" height="7" rx="1"/>
                         <rect x="14" y="14" width="7" height="7" rx="1"/>
                         <rect x="3" y="14" width="7" height="7" rx="1"/>
                     </svg>
-                    Dashboard
+                    Overview
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="#" class="sidebar-link">
+                <a href="#preRegistrationSection" class="sidebar-link" data-student-section-link>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                         <polyline points="14 2 14 8 20 8"/>
                         <line x1="16" y1="13" x2="8" y2="13"/>
                         <line x1="16" y1="17" x2="8" y2="17"/>
                     </svg>
-                    Pre-Registration
+                    Register
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="#" class="sidebar-link">
+                <a href="#studentScheduleSection" class="sidebar-link" data-student-section-link>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
                         <line x1="16" y1="2" x2="16" y2="6"/>
                         <line x1="8" y1="2" x2="8" y2="6"/>
                         <line x1="3" y1="10" x2="21" y2="10"/>
                     </svg>
-                    My Schedule
+                    Schedule
                 </a>
             </li>
             <li class="sidebar-item">
@@ -97,105 +105,212 @@
                 </a>
             </li>
         </ul>
+
+        <div class="sidebar-footer">
+            <div class="admin-profile">
+                <div class="admin-avatar" id="studentAvatar">ST</div>
+                <div class="admin-profile-info">
+                    <span id="studentName">Student</span>
+                    <small><span class="admin-status-dot"></span>Signed in</small>
+                </div>
+            </div>
+
+            <button class="btn btn-outline btn-sm" id="studentLogoutBtn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+                Logout
+            </button>
+        </div>
     </aside>
 
     <main class="main-content student-main-content">
-        <div class="page-header student-page-header">
-            <div>
-                <p class="student-eyebrow">Enrollment queue helper</p>
-                <h1 class="page-title">Welcome back, <span id="studentFirstName">Student</span></h1>
-                <p class="page-subtitle">Complete your pre-registration, choose a time slot, and keep your enrollment schedule ready.</p>
+        <section class="student-view active" id="studentOverviewSection">
+            <div class="page-header student-page-header">
+                <div class="student-heading-copy">
+                    <h1 class="page-title">Welcome back, <span id="studentFirstName">Student</span></h1>
+                    <p class="page-subtitle">Complete your registration request, choose a time slot, and keep your enrollment schedule ready.</p>
+                </div>
+                <button class="btn btn-primary" id="startRegistrationBtn">Start Register</button>
             </div>
-            <button class="btn btn-primary btn-sm" id="startRegistrationBtn">Start Pre-Registration</button>
-        </div>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-header">
-                    <div class="stat-icon">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                            <polyline points="14 2 14 8 20 8"/>
-                        </svg>
+            <div class="overview-grid student-overview-grid">
+                <div class="overview-card overview-card-large">
+                    <div class="overview-card-header">
+                        <span class="student-overview-icon" aria-hidden="true">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M8 7h8"/>
+                                <path d="M8 11h8"/>
+                                <path d="M8 15h5"/>
+                                <path d="M6 3h12a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/>
+                            </svg>
+                        </span>
+                        <div>
+                            <h2>My Register</h2>
+                            <p>Your current enrollment visit request.</p>
+                        </div>
+                    </div>
+                    <div class="overview-list" id="studentOverviewRegistration">
+                        <div class="overview-empty">Loading registration status...</div>
                     </div>
                 </div>
-                <div class="stat-number" id="registrationStatusStat">Not Started</div>
-                <div class="stat-label">Pre-Registration Status</div>
-            </div>
 
-            <div class="stat-card">
-                <div class="stat-header">
-                    <div class="stat-icon">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                            <line x1="16" y1="2" x2="16" y2="6"/>
-                            <line x1="8" y1="2" x2="8" y2="6"/>
-                            <line x1="3" y1="10" x2="21" y2="10"/>
-                        </svg>
+                <div class="overview-card">
+                    <div class="overview-card-header">
+                        <span class="student-overview-icon" aria-hidden="true">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="17" rx="2"/>
+                                <path d="M8 2v4"/>
+                                <path d="M16 2v4"/>
+                                <path d="M3 10h18"/>
+                                <path d="M8 15h.01"/>
+                                <path d="M12 15h.01"/>
+                                <path d="M16 15h.01"/>
+                            </svg>
+                        </span>
+                        <div>
+                            <h2>Available Slots</h2>
+                            <p>Upcoming schedule options with remaining seats.</p>
+                        </div>
+                    </div>
+                    <div class="overview-list" id="studentOverviewSlots">
+                        <div class="overview-empty">Loading available slots...</div>
                     </div>
                 </div>
-                <div class="stat-number" id="availableSlotsStat">--</div>
-                <div class="stat-label">Available Time Slots</div>
-            </div>
 
-            <div class="stat-card">
-                <div class="stat-header">
-                    <div class="stat-icon">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"/>
-                            <polyline points="12 6 12 12 16 14"/>
-                        </svg>
+                <div class="overview-card">
+                    <div class="overview-card-header">
+                        <span class="student-overview-icon" aria-hidden="true">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 6 9 17l-5-5"/>
+                            </svg>
+                        </span>
+                        <div>
+                            <h2>Enrollment Checklist</h2>
+                            <p>Prepare these before your onsite visit.</p>
+                        </div>
+                    </div>
+                    <div class="queue-summary-list student-checklist-list">
+                        <div class="queue-summary-item">
+                            <span>COM</span>
+                            <strong>Bring it</strong>
+                        </div>
+                        <div class="queue-summary-item">
+                            <span>Balance</span>
+                            <strong>Clear first</strong>
+                        </div>
+                        <div class="queue-summary-item">
+                            <span>Receipt</span>
+                            <strong>Required</strong>
+                        </div>
+                        <div class="queue-summary-item">
+                            <span>Payment</span>
+                            <strong>PHP 500+</strong>
+                        </div>
                     </div>
                 </div>
-                <div class="stat-number" id="selectedScheduleStat">--</div>
-                <div class="stat-label">Selected Schedule</div>
+
+                <div class="overview-card">
+                    <div class="overview-card-header">
+                        <span class="student-overview-icon" aria-hidden="true">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 8v5l3 2"/>
+                                <circle cx="12" cy="12" r="9"/>
+                                <path d="M16.5 7.5 18 6"/>
+                            </svg>
+                        </span>
+                        <div>
+                            <h2>Visit Reminder</h2>
+                            <p>Quick guide for enrollment day.</p>
+                        </div>
+                    </div>
+                    <div class="overview-list" id="studentOverviewReminder">
+                        <div class="overview-empty">Loading reminder...</div>
+                    </div>
+                </div>
             </div>
-        </div>
+        </section>
 
-        <section class="dashboard-section" id="preRegistrationSection">
-            <div class="student-dashboard-grid">
-                <div class="card student-action-card">
-                    <div class="card-body">
-                        <span class="status-badge status-pending">Next Step</span>
-                        <h2 class="section-title">Finish Your Pre-Registration</h2>
-                        <p>Fill out your course, year level, and preferred enrollment slot so you can avoid long queue waiting.</p>
+        <section class="student-view dashboard-section" id="preRegistrationSection" hidden>
+            <div class="page-header student-page-header">
+                <div class="student-heading-copy">
+                    <h1 class="page-title">Register</h1>
+                    <p class="page-subtitle">Submit or update your enrollment visit details so staff can review your request before your scheduled visit.</p>
+                </div>
+                <div class="student-heading-aside" aria-label="Registration focus">
+                    <span class="student-heading-icon" aria-hidden="true">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M8 7h8"/>
+                            <path d="M8 11h8"/>
+                            <path d="M8 15h5"/>
+                            <path d="M6 3h12a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/>
+                        </svg>
+                    </span>
+                    <div>
+                        <span>Student Request</span>
+                        <strong>For staff pre-check</strong>
+                    </div>
+                </div>
+            </div>
 
-                        <form class="student-registration-form" id="preRegistrationForm">
-                            <div class="form-group">
-                                <label class="form-label" for="studentFullNameInput">Full Name</label>
-                                <input id="studentFullNameInput" type="text" class="form-input student-plain-input" placeholder="Student name" readonly>
-                            </div>
+            <div class="student-registration-layout">
+                <div class="student-registration-stack">
+                    <form class="student-registration-form" id="preRegistrationForm">
+                            <div class="student-form-section">
+                                <div class="student-section-heading">
+                                    <span>01</span>
+                                    <div>
+                                        <strong>Student and Schedule Details</strong>
+                                        <p>Select your course, year level, and preferred onsite visit slot.</p>
+                                    </div>
+                                </div>
+                                <div class="student-registration-fields">
+                                    <div class="form-group">
+                                        <label class="form-label" for="studentFullNameInput">Full Name</label>
+                                        <input id="studentFullNameInput" type="text" class="form-input student-plain-input" placeholder="Student name" readonly>
+                                    </div>
 
-                            <div class="form-group">
-                                <label class="form-label" for="courseInput">Course</label>
-                                <select id="courseInput" name="course" class="form-input student-plain-input" required>
-                                    <option value="">Select course</option>
-                                    <option value="Bachelor of Science in Information Technology">BS Information Technology</option>
-                                    <option value="Bachelor of Science in Computer Science">BS Computer Science</option>
-                                    <option value="Bachelor of Science in Information Systems">BS Information Systems</option>
-                                    <option value="Bachelor of Science in Business Administration">BS Business Administration</option>
-                                </select>
-                            </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="courseInput">Course</label>
+                                        <select id="courseInput" name="course" class="form-input student-plain-input" required>
+                                            <option value="">Select course</option>
+                                            <option value="Bachelor of Science in Information Technology">BS Information Technology</option>
+                                            <option value="Bachelor of Science in Computer Science">BS Computer Science</option>
+                                            <option value="Bachelor of Science in Information Systems">BS Information Systems</option>
+                                            <option value="Bachelor of Science in Business Administration">BS Business Administration</option>
+                                        </select>
+                                    </div>
 
-                            <div class="form-group">
-                                <label class="form-label" for="yearLevelInput">Year Level</label>
-                                <select id="yearLevelInput" name="yearLevel" class="form-input student-plain-input" required>
-                                    <option value="">Select year level</option>
-                                    <option value="1st Year">1st Year</option>
-                                    <option value="2nd Year">2nd Year</option>
-                                    <option value="3rd Year">3rd Year</option>
-                                    <option value="4th Year">4th Year</option>
-                                </select>
-                            </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="yearLevelInput">Year Level</label>
+                                        <select id="yearLevelInput" name="yearLevel" class="form-input student-plain-input" required>
+                                            <option value="">Select year level</option>
+                                            <option value="1st Year">1st Year</option>
+                                            <option value="2nd Year">2nd Year</option>
+                                            <option value="3rd Year">3rd Year</option>
+                                            <option value="4th Year">4th Year</option>
+                                        </select>
+                                    </div>
 
-                            <div class="form-group">
-                                <label class="form-label" for="timeSlotInput">Preferred Time Slot</label>
-                                <select id="timeSlotInput" name="timeSlotId" class="form-input student-plain-input" required>
-                                    <option value="">Loading time slots...</option>
-                                </select>
+                                    <div class="form-group">
+                                        <label class="form-label" for="timeSlotInput">Preferred Time Slot</label>
+                                        <select id="timeSlotInput" name="timeSlotId" class="form-input student-plain-input" required>
+                                            <option value="">Loading time slots...</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="student-fee-notice">
+                                <div class="student-section-heading">
+                                    <span>02</span>
+                                    <div>
+                                        <strong>Initial Payment Reminder</strong>
+                                        <p>Prepare at least PHP 500 for your visit. This system does not collect payment online.</p>
+                                    </div>
+                                </div>
                                 <strong>Minimum Initial Payment Reminder: ₱500</strong>
                                 <p>Please prepare at least ₱500 for your enrollment visit. This system does not collect payment online.</p>
                                 <div class="form-group">
@@ -209,6 +324,13 @@
                             </div>
 
                             <div class="student-requirements-notice">
+                                <div class="student-section-heading">
+                                    <span>03</span>
+                                    <div>
+                                        <strong>Enrollment Readiness Checklist</strong>
+                                        <p>Confirm these reminders and optionally upload supporting images for faster admin review.</p>
+                                    </div>
+                                </div>
                                 <strong>Enrollment Readiness Checklist</strong>
                                 <p>These reminders help prevent delays when you arrive at the enrollment area.</p>
                                 <label class="form-checkbox student-fee-checkbox">
@@ -223,75 +345,57 @@
                                     <input type="checkbox" name="receiptAcknowledged" required>
                                     <span>I will bring my tuition/payment receipt for verification.</span>
                                 </label>
+                                <div class="student-evidence-grid">
+                                    <label class="student-evidence-upload">
+                                        <span>COM Image</span>
+                                        <small>Optional evidence. JPG, PNG, or WEBP up to 5MB.</small>
+                                        <input type="file" name="comEvidence" accept="image/png,image/jpeg,image/webp">
+                                    </label>
+                                    <label class="student-evidence-upload">
+                                        <span>Receipt Image</span>
+                                        <small>Optional evidence. Do not upload unrelated payment screenshots.</small>
+                                        <input type="file" name="receiptEvidence" accept="image/png,image/jpeg,image/webp">
+                                    </label>
+                                </div>
                             </div>
 
                             <p class="auth-message student-form-message" id="preRegistrationMessage" role="alert"></p>
 
-                            <button class="btn btn-primary btn-full" type="submit">Submit Pre-Registration</button>
-                        </form>
-                    </div>
+                            <div class="student-form-actions">
+                                <button class="btn btn-primary btn-full" type="submit">Submit Register</button>
+                            </div>
+                    </form>
                 </div>
 
-                <div class="card student-timeline-card" id="confirmationCard">
-                    <div class="card-header">
-                        <h2 class="section-title">Booking Confirmation</h2>
-                    </div>
-                    <div class="card-body">
-                        <div class="student-empty-confirmation" id="emptyConfirmation">
-                            <p>No confirmed schedule yet.</p>
-                            <span>Submit the form to reserve your enrollment visit slot.</span>
-                        </div>
-
-                        <div class="student-confirmation-details" id="confirmationDetails" hidden>
-                            <div>
-                                <span>Status</span>
-                                <strong id="confirmationStatus">--</strong>
-                            </div>
-                            <div id="rejectionReasonRow" hidden>
-                                <span>Review Note</span>
-                                <strong id="confirmationRejectionReason">--</strong>
-                            </div>
-                            <div>
-                                <span>Course</span>
-                                <strong id="confirmationCourse">--</strong>
-                            </div>
-                            <div>
-                                <span>Year Level</span>
-                                <strong id="confirmationYearLevel">--</strong>
-                            </div>
-                            <div>
-                                <span>Schedule</span>
-                                <strong id="confirmationSchedule">--</strong>
-                            </div>
-                            <div>
-                                <span>Initial Payment Reminder</span>
-                                <strong id="confirmationFeeNotice">--</strong>
-                            </div>
-                            <div>
-                                <span>Expected Initial Payment</span>
-                                <strong id="confirmationExpectedPayment">--</strong>
-                            </div>
-                            <div>
-                                <span>Requirements</span>
-                                <strong id="confirmationRequirements">--</strong>
-                            </div>
-                            <div>
-                                <span>Post-Visit Reminder</span>
-                                <strong>Claim your updated COM after staff processing.</strong>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </section>
 
-        <section class="dashboard-section">
-            <div class="section-header">
-                <h2 class="section-title">Suggested Time Slots</h2>
-                <button class="btn btn-outline btn-sm">View All Slots</button>
+        <section class="student-view dashboard-section" id="studentScheduleSection" hidden>
+            <div class="page-header student-page-header">
+                <div class="student-heading-copy">
+                    <h1 class="page-title">Schedule</h1>
+                    <p class="page-subtitle">Review all active enrollment visit slots and check how many seats are still available.</p>
+                </div>
+                <div class="student-heading-aside" aria-label="Schedule mode">
+                    <span class="student-heading-icon" aria-hidden="true">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="17" rx="2"/>
+                            <path d="M8 2v4"/>
+                            <path d="M16 2v4"/>
+                            <path d="M3 10h18"/>
+                            <path d="M8 15h.01"/>
+                            <path d="M12 15h.01"/>
+                            <path d="M16 15h.01"/>
+                        </svg>
+                    </span>
+                    <div>
+                        <span>Read-only</span>
+                        <strong>Live slot availability</strong>
+                    </div>
+                </div>
             </div>
 
-            <div class="timeslot-grid" id="timeSlotGrid">
+            <div class="timeslot-grid student-timeslot-grid" id="timeSlotGrid">
                 <div class="timeslot-card">
                     <div class="timeslot-time">Loading time slots...</div>
                     <div class="timeslot-count">Please wait</div>

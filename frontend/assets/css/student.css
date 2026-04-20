@@ -3,10 +3,28 @@
     color: #166534;
 }
 
+.student-nav-status .admin-current-view {
+    background: var(--primary-600);
+    border-color: var(--primary-600);
+}
+
+.student-nav-status .admin-date-pill {
+    color: var(--gray-600);
+}
+
 .student-main-content {
     background:
         radial-gradient(circle at top right, rgba(59, 130, 246, 0.08), transparent 28rem),
         #f8fafc;
+}
+
+.student-view[hidden] {
+    display: none;
+}
+
+.student-view.active {
+    animation: viewFadeIn 220ms ease both;
+    flex: 1;
 }
 
 .student-page-header {
@@ -14,6 +32,96 @@
     align-items: flex-start;
     justify-content: space-between;
     gap: var(--spacing-lg);
+    border-color: rgba(37, 99, 235, 0.16);
+}
+
+.student-page-header::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 4px;
+    background: var(--primary-600);
+}
+
+.student-heading-copy {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 0.35rem;
+    max-width: 48rem;
+}
+
+.student-heading-copy .page-title {
+    margin: 0;
+    font-size: clamp(1.5rem, 2vw, 2rem);
+    font-weight: 760;
+    letter-spacing: -0.025em;
+}
+
+.student-heading-copy .page-title span {
+    color: var(--primary-700);
+}
+
+.student-heading-copy .page-subtitle {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.student-heading-aside {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    min-width: min(100%, 260px);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 1px solid var(--primary-600);
+    border-radius: var(--radius-xl);
+    background: var(--primary-600);
+    box-shadow: 0 12px 24px rgba(37, 99, 235, 0.18);
+}
+
+.student-heading-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 42px;
+    width: 42px;
+    height: 42px;
+    border-radius: var(--radius-lg);
+    background: rgba(255, 255, 255, 0.16);
+    color: white;
+}
+
+.student-heading-aside div {
+    display: grid;
+    gap: 0.15rem;
+    min-width: 0;
+}
+
+.student-heading-aside span:not(.student-heading-icon) {
+    color: rgba(255, 255, 255, 0.74);
+    font-size: 0.7rem;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.student-heading-aside strong {
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.student-page-header #startRegistrationBtn {
+    position: relative;
+    z-index: 1;
+    min-height: 50px;
+    padding-inline: var(--spacing-lg);
+    padding-block: 0;
+    border-radius: var(--radius-lg);
+    font-weight: 800;
 }
 
 .student-eyebrow {
@@ -31,129 +139,273 @@
     gap: var(--spacing-lg);
 }
 
-.student-action-card {
-    border-color: rgba(37, 99, 235, 0.18);
-    background:
-        linear-gradient(135deg, rgba(239, 246, 255, 0.92), rgba(255, 255, 255, 0.96)),
-        white;
+.student-registration-layout {
+    display: grid;
+    width: 100%;
 }
 
-.student-action-card .card-body {
+.student-overview-grid .overview-card {
+    position: relative;
+    overflow: hidden;
+    border-color: rgba(37, 99, 235, 0.18);
+    background:
+        linear-gradient(180deg, rgba(239, 246, 255, 0.72) 0, rgba(255, 255, 255, 0.96) 7.5rem),
+        white;
+    box-shadow: 0 14px 32px rgba(15, 23, 42, 0.08);
+}
+
+.student-overview-grid .overview-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 4px;
+    background: var(--primary-600);
+}
+
+.student-overview-grid .overview-card-header {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
+    align-items: center;
     gap: var(--spacing-md);
 }
 
-.student-action-card p {
-    max-width: 560px;
-    color: var(--gray-600);
-    line-height: 1.7;
+.student-overview-grid .overview-card-header > div {
+    min-width: 0;
+}
+
+.student-overview-grid .overview-card-header h2 {
+    font-weight: 800;
+}
+
+.student-overview-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
+    border: 1px solid rgba(37, 99, 235, 0.18);
+    border-radius: var(--radius-lg);
+    background: var(--primary-600);
+    color: #eff6ff;
+    box-shadow: 0 10px 20px rgba(37, 99, 235, 0.16);
+}
+
+.student-overview-grid .overview-list-item {
+    min-height: 64px;
+}
+
+.student-overview-grid .overview-list-item strong {
+    font-weight: 800;
+}
+
+.student-checklist-list .queue-summary-item strong {
+    font-size: 1rem;
+}
+
+.student-checklist-list .queue-summary-item {
+    border-color: rgba(37, 99, 235, 0.14);
+    background: rgba(255, 255, 255, 0.82);
+}
+
+.student-registration-stack {
+    display: grid;
+    align-content: start;
+    gap: clamp(var(--spacing-md), 2vw, var(--spacing-xl));
 }
 
 .student-registration-form {
     display: grid;
     width: 100%;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--spacing-md);
+    column-gap: clamp(var(--spacing-md), 2vw, var(--spacing-lg));
+    row-gap: var(--spacing-md);
 }
 
-.student-registration-form .btn-full,
-.student-form-message {
+.student-form-message,
+.student-form-section,
+.student-fee-notice,
+.student-requirements-notice,
+.student-form-actions {
     grid-column: 1 / -1;
+}
+
+.student-form-section,
+.student-fee-notice,
+.student-requirements-notice {
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    gap: clamp(var(--spacing-md), 1.8vw, var(--spacing-lg));
+    padding: clamp(var(--spacing-lg), 2.4vw, var(--spacing-xl));
+    border: 1px solid rgba(37, 99, 235, 0.14);
+    border-radius: var(--radius-xl);
+    background: rgba(255, 255, 255, 0.82);
+}
+
+.student-form-section::before,
+.student-fee-notice::before,
+.student-requirements-notice::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 4px;
+    background: var(--primary-600);
+}
+
+.student-section-heading {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+}
+
+.student-section-heading > span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 34px;
+    width: 34px;
+    height: 34px;
+    border-radius: var(--radius-lg);
+    background: var(--primary-600);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 800;
+}
+
+.student-section-heading strong {
+    display: block;
+    color: var(--gray-900);
+    font-size: 0.95rem;
+    font-weight: 800;
+}
+
+.student-section-heading p {
+    margin: 0.2rem 0 0;
+    color: var(--gray-600);
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+.student-registration-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(var(--spacing-md), 1.8vw, var(--spacing-lg));
 }
 
 .student-plain-input {
     padding-left: var(--spacing-md);
 }
 
-.student-fee-notice,
-.student-requirements-notice {
-    grid-column: 1 / -1;
+.student-form-actions {
     display: grid;
-    gap: var(--spacing-sm);
-    padding: var(--spacing-md);
-    border: 1px solid #bfdbfe;
-    border-radius: var(--radius-xl);
-    background: #eff6ff;
+    width: 100%;
+    margin-top: calc(var(--spacing-sm) * -1);
 }
 
-.student-requirements-notice {
-    border-color: #bbf7d0;
-    background: #f0fdf4;
+.student-form-actions .btn-full {
+    display: flex;
+    justify-self: stretch;
+    width: 100%;
+    max-width: none;
+    min-height: 48px;
+    padding-inline: var(--spacing-xl);
+    font-weight: 800;
+    box-sizing: border-box;
 }
 
-.student-fee-notice strong,
-.student-requirements-notice strong {
-    color: var(--primary-800);
-    font-size: 0.9375rem;
+.student-fee-notice {
+    background: rgba(255, 255, 255, 0.82);
 }
 
-.student-requirements-notice strong {
-    color: #166534;
-}
-
-.student-fee-notice p,
-.student-requirements-notice p {
-    margin: 0;
-    color: var(--gray-600);
-    font-size: 0.875rem;
-    line-height: 1.5;
+.student-fee-notice > strong,
+.student-fee-notice > p,
+.student-requirements-notice > strong,
+.student-requirements-notice > p {
+    display: none;
 }
 
 .student-fee-checkbox {
     align-items: flex-start;
 }
 
-.student-empty-confirmation {
+.student-evidence-grid {
     display: grid;
-    gap: var(--spacing-xs);
-    padding: var(--spacing-lg);
-    border: 1px dashed var(--gray-300);
-    border-radius: var(--radius-xl);
-    background: var(--gray-50);
-    color: var(--gray-600);
-}
-
-.student-empty-confirmation p {
-    margin: 0;
-    color: var(--gray-900);
-    font-weight: 700;
-}
-
-.student-empty-confirmation span {
-    font-size: 0.875rem;
-}
-
-.student-confirmation-details {
-    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--spacing-md);
 }
 
-.student-confirmation-details div {
+.student-evidence-upload {
     display: grid;
-    gap: 0.25rem;
-    padding-bottom: var(--spacing-md);
-    border-bottom: 1px solid var(--gray-100);
+    gap: 0.45rem;
+    padding: var(--spacing-md);
+    border: 1px dashed rgba(37, 99, 235, 0.24);
+    border-radius: var(--radius-lg);
+    background: #fbfdff;
 }
 
-.student-confirmation-details div:last-child {
-    padding-bottom: 0;
-    border-bottom: 0;
-}
-
-.student-confirmation-details span {
-    color: var(--gray-500);
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-}
-
-.student-confirmation-details strong {
+.student-evidence-upload span {
     color: var(--gray-900);
-    font-size: 0.9375rem;
+    font-size: 0.9rem;
+    font-weight: 800;
+}
+
+.student-evidence-upload small {
+    color: var(--gray-500);
+    font-size: 0.78rem;
+    line-height: 1.45;
+}
+
+.student-evidence-upload input {
+    width: 100%;
+    color: var(--gray-600);
+    font-size: 0.85rem;
+}
+
+.student-timeslot-grid {
+    width: 100%;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: var(--spacing-lg);
+    padding: 0;
+    background: transparent;
+}
+
+.student-timeslot-card {
+    position: relative;
+    overflow: hidden;
+    min-height: 190px;
+    border-color: rgba(37, 99, 235, 0.14);
+}
+
+.student-timeslot-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 4px;
+    background: var(--primary-600);
+}
+
+.student-timeslot-card .timeslot-card-header,
+.student-timeslot-card .timeslot-meter,
+.student-timeslot-card .student-slot-meta,
+.student-timeslot-card .timeslot-break-note {
+    position: relative;
+    z-index: 1;
+}
+
+.student-timeslot-card .timeslot-time {
+    font-size: 1.05rem;
+}
+
+.student-slot-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-sm);
+    margin-top: auto;
+    padding-top: var(--spacing-sm);
+    border-top: 1px solid var(--gray-100);
+    color: var(--gray-500);
+    font-size: 0.8125rem;
+    font-weight: 700;
 }
 
 .timeslot-card.is-full {
@@ -198,17 +450,129 @@
     box-shadow: 0 0 0 4px var(--primary-100);
 }
 
-@media (max-width: 900px) {
+@media (max-width: 767px) {
     .student-page-header {
         flex-direction: column;
+    }
+
+    .student-heading-aside {
+        width: 100%;
     }
 
     .student-dashboard-grid {
         grid-template-columns: 1fr;
     }
 
-    .student-registration-form {
+    .student-registration-fields {
         grid-template-columns: 1fr;
+    }
+
+    .student-evidence-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .student-timeslot-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+}
+
+@media (min-width: 768px) {
+    .student-heading-aside {
+        min-width: 220px;
+        padding: 0.55rem 0.75rem;
+        border-radius: var(--radius-lg);
+    }
+
+    .student-heading-icon {
+        flex-basis: 36px;
+        width: 36px;
+        height: 36px;
+    }
+
+    .student-heading-aside span:not(.student-heading-icon) {
+        font-size: 0.65rem;
+    }
+
+    .student-heading-aside strong {
+        font-size: 0.82rem;
+    }
+
+    .student-registration-form {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-items: start;
+    }
+
+    .student-registration-stack {
+        gap: var(--spacing-lg);
+    }
+
+    .student-form-section,
+    .student-fee-notice {
+        grid-column: span 1;
+        min-height: 100%;
+    }
+
+    .student-requirements-notice {
+        grid-column: 1 / -1;
+        min-height: 100%;
+    }
+
+    .student-evidence-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .student-section-heading strong {
+        font-size: 1rem;
+    }
+
+    .student-section-heading p {
+        font-size: 0.9rem;
+    }
+
+    .student-registration-form .form-label,
+    .student-evidence-upload span {
+        font-size: 0.92rem;
+    }
+
+    .student-evidence-upload small {
+        font-size: 0.82rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .student-section-heading strong {
+        font-size: 1.06rem;
+    }
+
+    .student-section-heading p {
+        font-size: 0.94rem;
+    }
+
+    .student-registration-form .form-label,
+    .student-evidence-upload span {
+        font-size: 0.95rem;
+    }
+
+    .student-registration-form .form-input,
+    .student-registration-form .form-checkbox span,
+    .student-evidence-upload input {
+        font-size: 0.95rem;
+    }
+}
+
+@media (min-width: 1440px) {
+    .student-section-heading strong {
+        font-size: 1.12rem;
+    }
+
+    .student-section-heading p {
+        font-size: 0.98rem;
+    }
+
+    .student-registration-form .form-input,
+    .student-registration-form .form-checkbox span {
+        font-size: 1rem;
     }
 }
 
@@ -217,7 +581,36 @@
         width: 100%;
     }
 
-    .student-action-card .card-body {
-        min-height: auto;
+    .student-section-heading {
+        align-items: flex-start;
+    }
+
+    .student-form-section,
+    .student-fee-notice,
+    .student-requirements-notice {
+        padding: var(--spacing-md);
+    }
+
+    .student-registration-stack,
+    .student-registration-form {
+        gap: var(--spacing-md);
+    }
+
+    .student-form-actions {
+        display: grid;
+    }
+
+    .student-form-actions .btn-full {
+        width: 100%;
+    }
+
+    .student-section-heading > span {
+        flex-basis: 32px;
+        width: 32px;
+        height: 32px;
+    }
+
+    .student-timeslot-card {
+        min-height: 170px;
     }
 }

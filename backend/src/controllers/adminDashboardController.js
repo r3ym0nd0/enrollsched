@@ -38,6 +38,8 @@ async function getAdminDashboard(req, res) {
             pr.com_acknowledged AS comAcknowledged,
             pr.balance_acknowledged AS balanceAcknowledged,
             pr.receipt_acknowledged AS receiptAcknowledged,
+            pr.com_evidence_path AS comEvidencePath,
+            pr.receipt_evidence_path AS receiptEvidencePath,
             pr.status,
             pr.rejection_reason AS rejectionReason,
             pr.created_at AS createdAt

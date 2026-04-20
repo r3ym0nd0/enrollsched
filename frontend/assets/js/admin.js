@@ -1068,6 +1068,7 @@ function openReviewPanel(registrationId) {
     const isRejected = registration.status === 'rejected';
     const requirementsReady = hasCompleteRequirements(registration);
     const feeAcknowledged = Boolean(registration.feeAcknowledged);
+    const evidenceLinks = getEvidenceLinks(registration);
 
     panel.innerHTML = `
         <div class="review-panel-card">
@@ -1114,6 +1115,16 @@ function openReviewPanel(registrationId) {
                 </div>
             ` : ''}
 
+            <div class="review-section">
+                <div class="review-section-header">
+                    <span>Evidence Uploads</span>
+                    <p>Optional COM and receipt images submitted by the student for pre-checking.</p>
+                </div>
+                <div class="review-evidence-grid">
+                    ${evidenceLinks}
+                </div>
+            </div>
+
             <div class="review-section review-reject-box">
                 <div class="review-section-header">
                     <span>Reject Reason</span>
@@ -1153,6 +1164,43 @@ function openReviewPanel(registrationId) {
     }
 
     document.body.style.overflow = 'hidden';
+}
+
+function getEvidenceLinks(registration) {
+    const evidenceItems = [
+        {
+            label: 'COM Image',
+            path: registration.comEvidencePath
+        },
+        {
+            label: 'Receipt Image',
+            path: registration.receiptEvidencePath
+        }
+    ];
+
+    return evidenceItems
+        .map(item => {
+            if (!item.path) {
+                return `
+                    <div class="review-evidence-item is-empty">
+                        <span>${escapeHtml(item.label)}</span>
+                        <strong>Not uploaded</strong>
+                    </div>
+                `;
+            }
+
+            const evidenceUrl = typeof window.buildApiUrl === 'function'
+                ? window.buildApiUrl(item.path)
+                : item.path;
+
+            return `
+                <a class="review-evidence-item" href="${escapeHtml(evidenceUrl)}" target="_blank" rel="noopener">
+                    <span>${escapeHtml(item.label)}</span>
+                    <strong>View image</strong>
+                </a>
+            `;
+        })
+        .join('');
 }
 
 function closeReviewPanel() {

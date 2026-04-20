@@ -2,12 +2,14 @@ document.addEventListener("DOMContentLoaded", () => {
   checkStudentSession();
   initStudentSidebar();
   initPreRegistration();
+  setStudentDatePill();
 
   const logoutBtn = document.getElementById("studentLogoutBtn");
   const startRegistrationBtn = document.getElementById("startRegistrationBtn");
   const logoutModalOverlay = document.getElementById("logoutModalOverlay");
   const confirmLogoutBtn = document.querySelector("[data-confirm-logout]");
   const cancelLogoutBtn = document.querySelector("[data-cancel-logout]");
+  const sectionLinks = document.querySelectorAll("[data-student-section-link]");
 
   if (logoutBtn) {
     logoutBtn.addEventListener("click", openLogoutModal);
@@ -27,16 +29,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (startRegistrationBtn) {
     startRegistrationBtn.addEventListener("click", () => {
-      document.getElementById("preRegistrationSection")?.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      });
+      showStudentView("#preRegistrationSection");
+      setActiveStudentSectionLink(document.querySelector('[href="#preRegistrationSection"]'));
     });
   }
+
+  sectionLinks.forEach((link) => {
+    link.addEventListener("click", (event) => {
+      event.preventDefault();
+      showStudentView(link.getAttribute("href"));
+      setActiveStudentSectionLink(link);
+    });
+  });
 
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
       closeLogoutModal();
+    }
+  });
+
+  document.addEventListener("click", (event) => {
+    const overviewAction = event.target.closest("[data-student-overview-action]");
+
+    if (overviewAction) {
+      showStudentView("#preRegistrationSection");
+      setActiveStudentSectionLink(document.querySelector('[href="#preRegistrationSection"]'));
     }
   });
 });
@@ -46,6 +63,7 @@ let currentRegistration = null;
 
 function initStudentSidebar() {
   const toggleBtn = document.getElementById("sidebarToggleBtn");
+  const closeBtn = document.getElementById("sidebarCloseBtn");
   const sidebar = document.querySelector(".sidebar");
   const overlay = document.getElementById("sidebarOverlay");
 
@@ -55,16 +73,22 @@ function initStudentSidebar() {
     sidebar.classList.add("active");
     overlay.classList.add("active");
     document.body.style.overflow = "hidden";
+    toggleBtn?.setAttribute("aria-expanded", "true");
   }
 
   function closeSidebar() {
     sidebar.classList.remove("active");
     overlay.classList.remove("active");
     document.body.style.overflow = "";
+    toggleBtn?.setAttribute("aria-expanded", "false");
   }
 
   if (toggleBtn) {
     toggleBtn.addEventListener("click", openSidebar);
+  }
+
+  if (closeBtn) {
+    closeBtn.addEventListener("click", closeSidebar);
   }
 
   overlay.addEventListener("click", closeSidebar);
@@ -72,6 +96,43 @@ function initStudentSidebar() {
   document.querySelectorAll(".sidebar-link").forEach((link) => {
     link.addEventListener("click", closeSidebar);
   });
+}
+
+function showStudentView(targetSelector) {
+  const targetView = document.querySelector(targetSelector);
+
+  if (!targetView) return;
+
+  document.querySelectorAll(".student-view").forEach((view) => {
+    const isActive = view === targetView;
+    view.hidden = !isActive;
+    view.classList.toggle("active", isActive);
+  });
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+}
+
+function setActiveStudentSectionLink(activeLink) {
+  if (!activeLink) return;
+
+  document.querySelectorAll("[data-student-section-link]").forEach((link) => {
+    link.classList.toggle("active", link === activeLink);
+  });
+}
+
+function setStudentDatePill() {
+  const datePill = document.getElementById("studentDatePill");
+
+  if (!datePill) return;
+
+  datePill.textContent = new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric"
+  }).format(new Date());
 }
 
 async function checkStudentSession() {
@@ -181,7 +242,6 @@ async function initPreRegistration() {
 async function loadTimeSlots() {
   const slotSelect = document.getElementById("timeSlotInput");
   const slotGrid = document.getElementById("timeSlotGrid");
-  const availableSlotsStat = document.getElementById("availableSlotsStat");
 
   try {
     const response = await apiFetch("/api/time-slots");
@@ -192,14 +252,10 @@ async function loadTimeSlots() {
     }
 
     availableSlots = data.slots || [];
-    const openSlots = availableSlots.filter((slot) => Boolean(slot.isActive) && !Boolean(slot.isFull));
-
-    if (availableSlotsStat) {
-      availableSlotsStat.textContent = String(openSlots.length);
-    }
 
     renderTimeSlotSelect(slotSelect, availableSlots);
     renderTimeSlotCards(slotGrid, availableSlots);
+    renderStudentOverview();
   } catch (error) {
     if (slotSelect) {
       slotSelect.innerHTML = '<option value="">Unable to load slots</option>';
@@ -213,6 +269,8 @@ async function loadTimeSlots() {
         </div>
       `;
     }
+
+    renderStudentOverview();
   }
 }
 
@@ -257,10 +315,15 @@ function renderTimeSlotCards(slotGrid, slots) {
 
       if (isBreak) {
         return `
-          <div class="timeslot-card timeslot-break-card">
-            <div class="timeslot-time">${escapeHtml(slot.slotLabel)}</div>
-            <div class="timeslot-count">Staff lunch break. Booking resumes at 1:00 PM.</div>
-            <span class="status-badge status-break">Break</span>
+          <div class="timeslot-card student-timeslot-card timeslot-break-card">
+            <div class="timeslot-card-header">
+              <div>
+                <div class="timeslot-time">${escapeHtml(slot.slotLabel)}</div>
+                <div class="timeslot-count">Staff lunch break. Booking resumes at 1:00 PM.</div>
+              </div>
+              <span class="status-badge status-break">Break</span>
+            </div>
+            <div class="timeslot-break-note">This period is blocked so staff can resume processing students after lunch.</div>
           </div>
         `;
       }
@@ -268,12 +331,27 @@ function renderTimeSlotCards(slotGrid, slots) {
       const isFull = Boolean(slot.isFull);
       const statusText = isFull ? "Full" : "Available";
       const statusClass = isFull ? "status-pending" : "status-approved";
+      const capacity = Number(slot.capacity || 0);
+      const bookedCount = Number(slot.bookedCount || 0);
+      const remainingSlots = Number(slot.remainingSlots || Math.max(capacity - bookedCount, 0));
+      const fillPercentage = capacity > 0 ? Math.min(Math.round((bookedCount / capacity) * 100), 100) : 0;
 
       return `
-        <div class="timeslot-card ${isFull ? "is-full" : ""}">
-          <div class="timeslot-time">${escapeHtml(slot.slotLabel)}</div>
-          <div class="timeslot-count">${slot.bookedCount} / ${slot.capacity} students</div>
-          <span class="status-badge ${statusClass}">${statusText}</span>
+        <div class="timeslot-card student-timeslot-card ${isFull ? "is-full" : ""}">
+          <div class="timeslot-card-header">
+            <div>
+              <div class="timeslot-time">${escapeHtml(slot.slotLabel)}</div>
+              <div class="timeslot-count">${remainingSlots} seat${remainingSlots === 1 ? "" : "s"} remaining</div>
+            </div>
+            <span class="status-badge ${statusClass}">${statusText}</span>
+          </div>
+          <div class="timeslot-meter" aria-hidden="true">
+            <span style="width: ${fillPercentage}%"></span>
+          </div>
+          <div class="student-slot-meta">
+            <span>${bookedCount} booked</span>
+            <span>${capacity} capacity</span>
+          </div>
         </div>
       `;
     })
@@ -286,7 +364,7 @@ async function loadMyPreRegistration() {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.message || "Unable to load pre-registration.");
+      throw new Error(data.message || "Unable to load registration request.");
     }
 
     if (data.registration) {
@@ -295,8 +373,11 @@ async function loadMyPreRegistration() {
       renderConfirmation(data.registration);
       setFormMode("update");
     }
+
+    renderStudentOverview();
   } catch (error) {
     setPreRegistrationMessage(error.message, "error");
+    renderStudentOverview();
   }
 }
 
@@ -305,7 +386,7 @@ async function submitPreRegistration(event) {
 
   const form = event.currentTarget;
   const submitButton = form.querySelector('button[type="submit"]');
-  const payload = Object.fromEntries(new FormData(form).entries());
+  const payload = new FormData(form);
 
   setPreRegistrationMessage("");
 
@@ -318,16 +399,13 @@ async function submitPreRegistration(event) {
     const isUpdate = Boolean(currentRegistration);
     const response = await apiFetch(isUpdate ? "/api/pre-registrations/me" : "/api/pre-registrations", {
       method: isUpdate ? "PUT" : "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(payload)
+      body: payload
     });
     const data = await response.json();
 
     if (!response.ok) {
       const suggestion = formatSuggestedSlots(data.suggestedSlots);
-      throw new Error(`${data.message || "Unable to submit pre-registration."}${suggestion}`);
+      throw new Error(`${data.message || "Unable to submit registration request."}${suggestion}`);
     }
 
     renderConfirmation(data.registration);
@@ -335,10 +413,11 @@ async function submitPreRegistration(event) {
     setFormMode("update");
     await loadTimeSlots();
     prefillPreRegistrationForm(data.registration);
+    renderStudentOverview();
     setPreRegistrationMessage(
       isUpdate
-        ? "Pre-registration updated and sent back for admin review."
-        : "Pre-registration submitted for admin review.",
+        ? "Registration request updated and sent back for admin review."
+        : "Registration request submitted for admin review.",
       "success"
     );
   } catch (error) {
@@ -347,10 +426,101 @@ async function submitPreRegistration(event) {
     if (submitButton) {
       submitButton.disabled = false;
       submitButton.textContent = currentRegistration
-        ? "Update Pre-Registration"
-        : "Submit Pre-Registration";
+        ? "Update Register"
+        : "Submit Register";
     }
   }
+}
+
+function renderStudentOverview() {
+  renderStudentOverviewRegistration();
+  renderStudentOverviewSlots();
+  renderStudentOverviewReminder();
+}
+
+function renderStudentOverviewRegistration() {
+  const container = document.getElementById("studentOverviewRegistration");
+
+  if (!container) return;
+
+  if (!currentRegistration) {
+    container.innerHTML = `
+      <button class="overview-list-item" type="button" data-student-overview-action="pre-registration">
+        <span>
+          <strong>Registration not started</strong>
+          <small>Submit your details to reserve an enrollment visit slot.</small>
+        </span>
+        <span class="overview-slot-count">Start</span>
+      </button>
+    `;
+    return;
+  }
+
+  container.innerHTML = `
+    <button class="overview-list-item" type="button" data-student-overview-action="pre-registration">
+      <span>
+        <strong>${escapeHtml(formatStatus(currentRegistration.status || "pending"))}</strong>
+        <small>${escapeHtml(currentRegistration.course || "Course pending")} · ${escapeHtml(currentRegistration.yearLevel || "Year pending")}</small>
+      </span>
+      <span class="overview-slot-count">${escapeHtml(currentRegistration.preferredTimeSlot || currentRegistration.slotLabel || "View")}</span>
+    </button>
+  `;
+}
+
+function renderStudentOverviewSlots() {
+  const container = document.getElementById("studentOverviewSlots");
+
+  if (!container) return;
+
+  const openSlots = availableSlots
+    .filter((slot) => Boolean(slot.isActive) && !Boolean(slot.isBreak) && !Boolean(slot.isFull))
+    .slice(0, 4);
+
+  if (openSlots.length === 0) {
+    container.innerHTML = '<div class="overview-empty">No open slots right now.</div>';
+    return;
+  }
+
+  container.innerHTML = openSlots
+    .map((slot) => `
+      <div class="overview-list-item">
+        <span>
+          <strong>${escapeHtml(slot.slotLabel)}</strong>
+          <small>${slot.bookedCount} / ${slot.capacity} students booked</small>
+        </span>
+        <span class="overview-slot-count">${slot.remainingSlots} left</span>
+      </div>
+    `)
+    .join("");
+}
+
+function renderStudentOverviewReminder() {
+  const container = document.getElementById("studentOverviewReminder");
+
+  if (!container) return;
+
+  const schedule = currentRegistration?.preferredTimeSlot || currentRegistration?.slotLabel || "your selected slot";
+
+  container.innerHTML = `
+    <div class="overview-list-item">
+      <span>
+        <strong>Arrive on time</strong>
+        <small>Visit the enrollment area during ${escapeHtml(schedule)}.</small>
+      </span>
+    </div>
+    <div class="overview-list-item">
+      <span>
+        <strong>Bring proof</strong>
+        <small>Prepare your COM, receipt, and onsite payment.</small>
+      </span>
+    </div>
+    <div class="overview-list-item">
+      <span>
+        <strong>After processing</strong>
+        <small>Claim your updated COM from the staff.</small>
+      </span>
+    </div>
+  `;
 }
 
 function prefillPreRegistrationForm(registration) {
@@ -397,6 +567,7 @@ function prefillPreRegistrationForm(registration) {
 }
 
 function renderConfirmation(registration) {
+  const confirmationCard = document.getElementById("confirmationCard");
   const emptyConfirmation = document.getElementById("emptyConfirmation");
   const confirmationDetails = document.getElementById("confirmationDetails");
   const confirmationStatus = document.getElementById("confirmationStatus");
@@ -405,11 +576,10 @@ function renderConfirmation(registration) {
   const confirmationCourse = document.getElementById("confirmationCourse");
   const confirmationYearLevel = document.getElementById("confirmationYearLevel");
   const confirmationSchedule = document.getElementById("confirmationSchedule");
+  const confirmationReference = document.getElementById("confirmationReference");
   const confirmationFeeNotice = document.getElementById("confirmationFeeNotice");
   const confirmationExpectedPayment = document.getElementById("confirmationExpectedPayment");
   const confirmationRequirements = document.getElementById("confirmationRequirements");
-  const registrationStatusStat = document.getElementById("registrationStatusStat");
-  const selectedScheduleStat = document.getElementById("selectedScheduleStat");
 
   if (emptyConfirmation) {
     emptyConfirmation.hidden = true;
@@ -419,8 +589,14 @@ function renderConfirmation(registration) {
     confirmationDetails.hidden = false;
   }
 
+  if (confirmationCard) {
+    confirmationCard.dataset.status = registration.status || "pending";
+  }
+
   if (confirmationStatus) {
-    confirmationStatus.textContent = formatStatus(registration.status || "pending");
+    const status = registration.status || "pending";
+    confirmationStatus.textContent = formatStatus(status);
+    confirmationStatus.className = `student-confirmation-status is-${status}`;
   }
 
   if (rejectionReasonRow) {
@@ -443,10 +619,20 @@ function renderConfirmation(registration) {
     confirmationSchedule.textContent = registration.preferredTimeSlot || registration.slotLabel || "--";
   }
 
+  if (confirmationReference) {
+    confirmationReference.textContent = registration.id
+      ? `PR-${String(registration.id).padStart(5, "0")}`
+      : "Pending";
+  }
+
   if (confirmationFeeNotice) {
     confirmationFeeNotice.textContent = registration.feeAcknowledged
       ? "Acknowledged - prepare at least ₱500"
       : "Not acknowledged";
+  }
+
+  if (confirmationFeeNotice && registration.feeAcknowledged) {
+    confirmationFeeNotice.textContent = "Acknowledged - prepare at least PHP 500";
   }
 
   if (confirmationExpectedPayment) {
@@ -459,13 +645,6 @@ function renderConfirmation(registration) {
       : "Incomplete";
   }
 
-  if (registrationStatusStat) {
-    registrationStatusStat.textContent = formatStatus(registration.status || "pending");
-  }
-
-  if (selectedScheduleStat) {
-    selectedScheduleStat.textContent = registration.preferredTimeSlot || registration.slotLabel || "--";
-  }
 }
 
 function setFormMode(mode) {
@@ -477,8 +656,8 @@ function setFormMode(mode) {
 
   if (submitButton) {
     submitButton.textContent = mode === "update"
-      ? "Update Pre-Registration"
-      : "Submit Pre-Registration";
+      ? "Update Register"
+      : "Submit Register";
   }
 }
 

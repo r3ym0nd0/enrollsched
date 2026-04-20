@@ -9,6 +9,7 @@ const preRegistrationRoutes = require("./routes/preRegistrationRoutes");
 const timeSlotRoutes = require("./routes/timeSlotRoutes");
 const requireAdmin = require("./middleware/requireAdmin");
 const requireStudent = require("./middleware/requireStudent");
+const { uploadRoot } = require("./middleware/evidenceUpload");
 
 const app = express();
 const frontendPath = path.join(__dirname, "..", "..", "frontend");
@@ -79,6 +80,7 @@ app.get("/student", requireStudent, (req, res) => {
   res.sendFile(path.join(frontendPath, "student.html"));
 });
 
+app.use("/uploads/pre-registration", requireAdmin, express.static(uploadRoot));
 app.use(express.static(frontendPath));
 
 app.use("/api/admin", adminRoutes);

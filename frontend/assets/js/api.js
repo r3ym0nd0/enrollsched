@@ -11,6 +11,8 @@
     return `${apiBaseUrl}${normalizedPath}`;
   }
 
+  window.buildApiUrl = buildApiUrl;
+
   window.apiFetch = function apiFetch(path, options = {}) {
     return fetch(buildApiUrl(path), {
       credentials: "include",
