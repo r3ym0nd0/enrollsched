@@ -6,6 +6,49 @@ document.addEventListener("DOMContentLoaded", () => {
   initPreRegistration();
   setStudentDatePill();
 
+async function initStudentHistory() {
+  const historyList = document.getElementById("studentHistoryList");
+  const historyCount = document.getElementById("historyRecordCount");
+
+  if (!historyList) return;
+
+  try {
+    const res = await apiFetch("/api/pre-registrations/history");
+    const result = await res.json();
+
+    if (!result.success || !result.data || result.data.length === 0) {
+      historyList.innerHTML = `<div class="overview-empty">No registration history found</div>`;
+      if (historyCount) historyCount.textContent = "0 entries";
+      return;
+    }
+
+    if (historyCount) historyCount.textContent = `${result.data.length} entries`;
+
+    historyList.innerHTML = result.data.map(reg => `
+      <div class="overview-card student-history-card">
+        <div class="student-history-header">
+          <div>
+            <strong>${reg.course} - ${reg.yearLevel}</strong>
+            <small>${new Date(reg.createdAt).toLocaleString()}</small>
+          </div>
+          <span class="student-history-status status-${reg.status || 'pending'}">${reg.status || 'Pending'}</span>
+        </div>
+        <div class="student-history-details">
+          <div><span>Slot:</span> ${reg.timeSlotLabel || 'Not selected'}</div>
+          <div><span>Payment:</span> ₱${reg.expectedPaymentAmount}</div>
+        </div>
+        ${reg.adminNotes ? `<div class="student-history-notes">${reg.adminNotes}</div>` : ''}
+      </div>
+    `).join('');
+
+  } catch (err) {
+    console.error("History load error:", err);
+    historyList.innerHTML = `<div class="overview-empty">Failed to load history. Refresh page.</div>`;
+  }
+}
+
+initStudentHistory();
+
   const logoutBtn = document.getElementById("studentLogoutBtn");
   const startRegistrationBtn = document.getElementById("startRegistrationBtn");
   const logoutModalOverlay = document.getElementById("logoutModalOverlay");

@@ -147,12 +147,16 @@
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="#" class="sidebar-link">
+                <a href="#studentHistorySection" class="sidebar-link" data-student-section-link>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M9 11l3 3L22 4"/>
-                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                        <path d="M12 8v4l3 3"/>
+                        <circle cx="12" cy="12" r="9"/>
+                        <path d="M3.5 9.5 2 8"/>
+                        <path d="M20.5 9.5 22 8"/>
+                        <path d="M3.5 14.5 2 16"/>
+                        <path d="M20.5 14.5 22 16"/>
                     </svg>
-                    Confirmation
+                    History
                 </a>
             </li>
             <li class="sidebar-item">
@@ -528,6 +532,32 @@
                 </div>
             </div>
         </section>
+
+        <section class="student-view dashboard-section" id="studentHistorySection" hidden>
+            <div class="page-header student-page-header">
+                <div class="student-heading-copy">
+                    <h1 class="page-title">Registration History</h1>
+                    <p class="page-subtitle">View all your previous enrollment visit submissions, statuses and request details.</p>
+                </div>
+                <div class="student-heading-aside" aria-label="History records">
+                    <span class="student-heading-icon" aria-hidden="true">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 8v4l3 3"/>
+                            <circle cx="12" cy="12" r="9"/>
+                        </svg>
+                    </span>
+                    <div>
+                        <span>Records</span>
+                        <strong id="historyRecordCount">0 entries</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="student-history-list" id="studentHistoryList">
+                <div class="overview-empty">Loading your registration history...</div>
+            </div>
+        </section>
+
     </main>
 
     <div class="logout-modal-overlay" id="logoutModalOverlay" aria-hidden="true"></div>

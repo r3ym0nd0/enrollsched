@@ -42,6 +42,40 @@ async function getSuggestedSlots(connection, excludedSlotId = null) {
   return slots;
 }
 
+async function getMyRegistrationHistory(req, res) {
+  try {
+    const studentId = req.session.student.id;
+
+    const [registrations] = await db.execute(
+      `
+        SELECT
+          pr.id,
+          pr.course,
+          pr.year_level AS yearLevel,
+          pr.time_slot_id AS timeSlotId,
+          ts.slot_label AS timeSlotLabel,
+          pr.expected_payment_amount AS expectedPaymentAmount,
+          pr.status,
+          pr.created_at AS createdAt
+        FROM pre_registrations pr
+        LEFT JOIN time_slots ts ON ts.id = pr.time_slot_id
+        WHERE pr.student_id = ?
+        ORDER BY pr.created_at DESC
+      `,
+      [studentId]
+    );
+
+    return res.status(200).json({
+      success: true,
+      data: registrations
+    });
+
+  } catch (error) {
+    console.error('Get registration history error:', error);
+    return res.status(500).json({ success: false, message: 'Failed to load registration history' });
+  }
+}
+
 async function getMyPreRegistration(req, res) {
   try {
     const [registrations] = await db.execute(
@@ -397,5 +431,6 @@ async function updateMyPreRegistration(req, res) {
 module.exports = {
   createPreRegistration,
   getMyPreRegistration,
+  getMyRegistrationHistory,
   updateMyPreRegistration
 };
