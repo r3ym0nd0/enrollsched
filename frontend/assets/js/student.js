@@ -14,7 +14,11 @@ async function initStudentHistory() {
 
   try {
     const res = await apiFetch("/api/pre-registrations/history");
-    const result = await res.json();
+    const result = await readJsonResponse(res, "Registration history API is not available.");
+
+    if (!res.ok) {
+      throw new Error(result.message || "Unable to load registration history.");
+    }
 
     if (!result.success || !result.data || result.data.length === 0) {
       historyList.innerHTML = `<div class="overview-empty">No registration history found</div>`;
@@ -77,7 +81,7 @@ async function initStudentHistory() {
 
   } catch (err) {
     console.error("History load error:", err);
-    historyList.innerHTML = `<div class="overview-empty">Failed to load history. Refresh page.</div>`;
+    historyList.innerHTML = `<div class="overview-empty">${escapeHtml(err.message || "Failed to load history. Refresh page.")}</div>`;
   }
 }
 
@@ -1305,6 +1309,17 @@ function formatSuggestedSlots(slots = []) {
 
   const labels = slots.map((slot) => slot.slotLabel).join(", ");
   return ` Suggested slots: ${labels}.`;
+}
+
+async function readJsonResponse(response, fallbackMessage = "Request failed.") {
+  const contentType = response.headers.get("content-type") || "";
+
+  if (contentType.includes("application/json")) {
+    return response.json();
+  }
+
+  await response.text();
+  throw new Error(fallbackMessage);
 }
 
 function titleCase(value) {
