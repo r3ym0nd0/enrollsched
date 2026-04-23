@@ -926,20 +926,24 @@ function renderTimeSlotCards(slotGrid, slots) {
         `;
       }
 
+      const isActive = Boolean(slot.isActive);
       const isFull = Boolean(slot.isFull);
-      const statusText = isFull ? "Full" : "Available";
-      const statusClass = isFull ? "status-pending" : "status-approved";
+      const statusText = !isActive ? "Unavailable" : isFull ? "Full" : "Available";
+      const statusClass = !isActive ? "status-unavailable" : isFull ? "status-pending" : "status-approved";
       const capacity = Number(slot.capacity || 0);
       const bookedCount = Number(slot.bookedCount || 0);
       const remainingSlots = Number(slot.remainingSlots || Math.max(capacity - bookedCount, 0));
+      const countText = !isActive
+        ? "Temporarily closed by staff"
+        : `${remainingSlots} seat${remainingSlots === 1 ? "" : "s"} remaining`;
       const fillPercentage = capacity > 0 ? Math.min(Math.round((bookedCount / capacity) * 100), 100) : 0;
 
       return `
-        <div class="timeslot-card student-timeslot-card ${isFull ? "is-full" : ""}">
+        <div class="timeslot-card student-timeslot-card ${isFull ? "is-full" : ""} ${!isActive ? "is-unavailable" : ""}">
           <div class="timeslot-card-header">
             <div>
               <div class="timeslot-time">${escapeHtml(slot.slotLabel)}</div>
-              <div class="timeslot-count">${remainingSlots} seat${remainingSlots === 1 ? "" : "s"} remaining</div>
+              <div class="timeslot-count">${escapeHtml(countText)}</div>
             </div>
             <span class="status-badge ${statusClass}">${statusText}</span>
           </div>

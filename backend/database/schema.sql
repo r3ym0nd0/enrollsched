@@ -28,6 +28,24 @@ CREATE TABLE IF NOT EXISTS time_slots (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+SET @time_slot_active_column_exists = (
+    SELECT COUNT(*)
+    FROM information_schema.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE()
+        AND TABLE_NAME = 'time_slots'
+        AND COLUMN_NAME = 'is_active'
+);
+
+SET @add_time_slot_active_column_sql = IF(
+    @time_slot_active_column_exists = 0,
+    'ALTER TABLE time_slots ADD COLUMN is_active BOOLEAN NOT NULL DEFAULT TRUE AFTER capacity',
+    'SELECT ''is_active column already exists'''
+);
+
+PREPARE add_time_slot_active_column_stmt FROM @add_time_slot_active_column_sql;
+EXECUTE add_time_slot_active_column_stmt;
+DEALLOCATE PREPARE add_time_slot_active_column_stmt;
+
 CREATE TABLE IF NOT EXISTS pre_registrations (
     id INT AUTO_INCREMENT PRIMARY KEY,
     student_id INT NOT NULL,
@@ -266,8 +284,11 @@ VALUES
 ON DUPLICATE KEY UPDATE
     start_time = VALUES(start_time),
     end_time = VALUES(end_time),
-    capacity = VALUES(capacity),
-    is_active = VALUES(is_active);
+    capacity = VALUES(capacity);
+
+UPDATE time_slots
+SET is_active = FALSE
+WHERE slot_label = '12:00 PM - 1:00 PM (Lunch Break)';
 
 INSERT INTO admins (admin_id, full_name, password_hash)
 VALUES (

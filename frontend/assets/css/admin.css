@@ -1,7 +1,7 @@
 .admin-navbar {
     position: fixed;
     top: 0;
-    left: 260px;
+    left: 0;
     right: 0;
     height: 64px;
     background: white;
@@ -10,8 +10,24 @@
     z-index: 1000;
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: space-between;
     padding: 0 var(--spacing-xl);
+}
+
+.admin-nav-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    min-width: 0;
+    color: var(--primary-800);
+    font-size: 1.05rem;
+    font-weight: 850;
+    letter-spacing: -0.025em;
+    text-decoration: none;
+}
+
+.admin-nav-brand svg {
+    flex: 0 0 auto;
 }
 
 .sidebar-brand {
@@ -70,6 +86,7 @@
     display: flex;
     align-items: center;
     gap: var(--spacing-sm);
+    margin-left: auto;
 }
 
 .admin-nav-status {
@@ -306,6 +323,89 @@
     line-height: 1.6;
 }
 
+.admin-page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--spacing-lg);
+    border-color: rgba(37, 99, 235, 0.16);
+}
+
+.admin-page-header::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 4px;
+    background: var(--primary-600);
+}
+
+.admin-heading-copy {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 0.35rem;
+    max-width: 48rem;
+}
+
+.admin-heading-copy .page-title {
+    margin: 0;
+    font-size: clamp(1.5rem, 2vw, 2rem);
+    font-weight: 760;
+    letter-spacing: -0.025em;
+}
+
+.admin-heading-copy .page-subtitle {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.admin-heading-aside {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    min-width: min(100%, 260px);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 1px solid var(--primary-600);
+    border-radius: var(--radius-xl);
+    background: var(--primary-600);
+    box-shadow: 0 12px 24px rgba(37, 99, 235, 0.18);
+}
+
+.admin-heading-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 42px;
+    width: 42px;
+    height: 42px;
+    border-radius: var(--radius-lg);
+    background: rgba(255, 255, 255, 0.16);
+    color: white;
+}
+
+.admin-heading-aside div {
+    display: grid;
+    gap: 0.15rem;
+    min-width: 0;
+}
+
+.admin-heading-aside span:not(.admin-heading-icon) {
+    color: rgba(255, 255, 255, 0.74);
+    font-size: 0.7rem;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.admin-heading-aside strong {
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
 .admin-view[hidden] {
     display: none;
 }
@@ -343,6 +443,7 @@
     padding: var(--spacing-lg);
     border-radius: var(--radius-xl);
     border: 1px solid var(--gray-300);
+    border-top: 4px solid var(--primary-600);
     box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
     transition: all 200ms ease;
     min-height: 132px;
@@ -400,6 +501,7 @@
     flex-direction: column;
     background: white;
     border: 1px solid var(--gray-300);
+    border-top: 4px solid var(--primary-600);
     border-radius: var(--radius-xl);
     box-shadow: 0 10px 24px rgba(15, 23, 42, 0.07);
     overflow: hidden;
@@ -926,60 +1028,21 @@ button.overview-list-item {
     color: #991b1b;
 }
 
-.timeslot-board {
-    overflow: hidden;
-    border: 1px solid var(--gray-300);
-    border-radius: var(--radius-xl);
-    background: white;
-    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
-}
-
-.timeslot-board-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: var(--spacing-lg);
-    padding: var(--spacing-lg) var(--spacing-xl);
-    border-bottom: 1px solid var(--gray-200);
-    background: linear-gradient(180deg, white 0%, #fbfdff 100%);
-}
-
-.timeslot-board-header h2 {
-    margin: 0;
-    color: var(--gray-900);
-    font-size: 1rem;
-    font-weight: 800;
-}
-
-.timeslot-board-header p {
-    margin: 0.25rem 0 0;
-    color: var(--gray-500);
-    font-size: 0.8125rem;
-    line-height: 1.5;
-}
-
-.timeslot-board-header > span {
-    flex-shrink: 0;
-    padding: 0.4rem 0.7rem;
-    border: 1px solid var(--gray-200);
-    border-radius: 999px;
-    color: var(--gray-600);
-    background: white;
-    font-size: 0.72rem;
-    font-weight: 800;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
+.status-unavailable {
+    background: var(--gray-100);
+    color: var(--gray-700);
 }
 
 .timeslot-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: var(--spacing-lg);
-    padding: var(--spacing-xl);
-    background: #fbfdff;
+    align-items: stretch;
 }
 
 .timeslot-card {
+    position: relative;
+    overflow: hidden;
     display: grid;
     gap: var(--spacing-md);
     min-height: 220px;
@@ -987,17 +1050,33 @@ button.overview-list-item {
     padding: var(--spacing-lg);
     border-radius: var(--radius-xl);
     border: 1px solid var(--gray-200);
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.07);
     transition: all 200ms ease;
 }
 
+.timeslot-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 4px;
+    background: var(--primary-600);
+}
+
 .timeslot-card:hover {
-    border-color: var(--primary-200);
-    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
-    transform: translateY(-2px);
+    border-color: rgba(37, 99, 235, 0.14);
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.07);
 }
 
 .timeslot-card.is-full {
     background: #f8fafc;
+}
+
+.timeslot-card.is-unavailable {
+    background: #f8fafc;
+}
+
+.timeslot-card.is-unavailable::before {
+    background: var(--gray-300);
 }
 
 .timeslot-empty-card {
@@ -1007,6 +1086,8 @@ button.overview-list-item {
 }
 
 .timeslot-card-header {
+    position: relative;
+    z-index: 1;
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
@@ -1023,6 +1104,8 @@ button.overview-list-item {
 }
 
 .timeslot-break-note {
+    position: relative;
+    z-index: 1;
     padding: var(--spacing-md);
     border: 1px dashed var(--gray-300);
     border-radius: var(--radius-lg);
@@ -1050,6 +1133,8 @@ button.overview-list-item {
 }
 
 .timeslot-meter {
+    position: relative;
+    z-index: 1;
     height: 10px;
     overflow: hidden;
     border-radius: 999px;
@@ -1064,6 +1149,8 @@ button.overview-list-item {
 }
 
 .capacity-editor {
+    position: relative;
+    z-index: 1;
     display: grid;
     grid-template-columns: 1fr auto;
     gap: var(--spacing-sm);
@@ -1630,10 +1717,20 @@ button.overview-list-item {
 }
 
 .timeslot-actions {
+    position: relative;
+    z-index: 1;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: var(--spacing-sm);
+}
+
+.timeslot-availability-btn {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    min-height: 40px;
+    justify-content: center;
 }
 
 .btn-sm {
@@ -1661,6 +1758,10 @@ button.overview-list-item {
     .admin-navbar {
         left: 0;
         justify-content: space-between;
+    }
+
+    .admin-nav-brand {
+        display: none;
     }
 
     .sidebar {
@@ -1693,9 +1794,45 @@ button.overview-list-item {
     }
 }
 
+@media (min-width: 1025px) {
+    .sidebar {
+        top: 64px;
+        height: calc(100vh - 64px);
+        height: calc(100dvh - 64px);
+    }
+
+    .sidebar-brand {
+        display: none;
+    }
+
+    .sidebar-menu {
+        padding-top: var(--spacing-lg);
+    }
+}
+
 @media (min-width: 768px) {
     .stats-grid {
         grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .admin-heading-aside {
+        min-width: 220px;
+        padding: 0.55rem 0.75rem;
+        border-radius: var(--radius-lg);
+    }
+
+    .admin-heading-icon {
+        flex-basis: 36px;
+        width: 36px;
+        height: 36px;
+    }
+
+    .admin-heading-aside span:not(.admin-heading-icon) {
+        font-size: 0.65rem;
+    }
+
+    .admin-heading-aside strong {
+        font-size: 0.82rem;
     }
 
     .overview-grid {
@@ -1724,6 +1861,14 @@ button.overview-list-item {
 @media (max-width: 768px) {
     .main-content {
         padding: var(--spacing-xl) var(--spacing-md);
+    }
+
+    .admin-page-header {
+        flex-direction: column;
+    }
+
+    .admin-heading-aside {
+        width: 100%;
     }
 
     .stat-card {
@@ -1755,19 +1900,9 @@ button.overview-list-item {
         gap: var(--spacing-md);
     }
 
-    .timeslot-board-header {
-        display: grid;
-        padding: var(--spacing-md);
-    }
-
-    .timeslot-board-header > span {
-        width: fit-content;
-    }
-
     .timeslot-grid {
         grid-template-columns: 1fr;
         gap: var(--spacing-md);
-        padding: var(--spacing-md);
     }
 
     .table-toolbar {

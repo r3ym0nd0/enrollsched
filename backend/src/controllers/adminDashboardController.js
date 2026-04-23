@@ -22,6 +22,7 @@ async function getAdminDashboard(req, res) {
               ON pr.time_slot_id = ts.id
               AND pr.status IN ('pending', 'approved', 'confirmed')
             WHERE ts.is_active = TRUE
+              AND ts.slot_label NOT LIKE '%Lunch Break%'
             GROUP BY ts.id, ts.capacity
           ) slot_counts
         `),
@@ -68,7 +69,7 @@ async function getAdminDashboard(req, res) {
           LEFT JOIN pre_registrations pr
             ON pr.time_slot_id = ts.id
             AND pr.status IN ('pending', 'approved', 'confirmed')
-          WHERE ts.is_active = TRUE
+          WHERE TIME_TO_SEC(TIMEDIFF(ts.end_time, ts.start_time)) >= 3600
             OR ts.slot_label LIKE '%Lunch Break%'
           GROUP BY
             ts.id,
@@ -130,7 +131,7 @@ async function updateTimeSlotCapacity(req, res) {
       return res.status(404).json({ message: "Time slot not found." });
     }
 
-    if (!slot.isActive || slot.slotLabel.includes("Lunch Break")) {
+    if (slot.slotLabel.includes("Lunch Break")) {
       await connection.rollback();
       return res.status(400).json({ message: "Break slots cannot be edited." });
     }
@@ -175,6 +176,53 @@ async function updateTimeSlotCapacity(req, res) {
   }
 }
 
+async function updateTimeSlotAvailability(req, res) {
+  const slotId = Number(req.params.id);
+  const { isActive } = req.body;
+
+  if (!Number.isInteger(slotId) || slotId <= 0) {
+    return res.status(400).json({ message: "Invalid time slot." });
+  }
+
+  if (typeof isActive !== "boolean") {
+    return res.status(400).json({ message: "Availability must be true or false." });
+  }
+
+  try {
+    const [slots] = await db.execute(
+      `
+        SELECT id, slot_label AS slotLabel
+        FROM time_slots
+        WHERE id = ?
+        LIMIT 1
+      `,
+      [slotId]
+    );
+
+    const slot = slots[0];
+
+    if (!slot) {
+      return res.status(404).json({ message: "Time slot not found." });
+    }
+
+    if (slot.slotLabel.includes("Lunch Break")) {
+      return res.status(400).json({ message: "Break slots cannot be changed." });
+    }
+
+    await db.execute("UPDATE time_slots SET is_active = ? WHERE id = ?", [isActive, slotId]);
+
+    return res.json({
+      message: `Time slot ${isActive ? "enabled" : "disabled"}.`,
+      slot: {
+        id: slotId,
+        isActive
+      }
+    });
+  } catch (error) {
+    return res.status(500).json({ message: "Unable to update time slot availability." });
+  }
+}
+
 async function updatePreRegistrationStatus(req, res) {
   const registrationId = Number(req.params.id);
   const { status, rejectionReason = "" } = req.body;
@@ -216,5 +264,6 @@ async function updatePreRegistrationStatus(req, res) {
 module.exports = {
   getAdminDashboard,
   updatePreRegistrationStatus,
-  updateTimeSlotCapacity
+  updateTimeSlotCapacity,
+  updateTimeSlotAvailability
 };

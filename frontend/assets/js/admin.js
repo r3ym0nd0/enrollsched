@@ -157,6 +157,12 @@ document.addEventListener('DOMContentLoaded', function() {
             saveSlotCapacity(button);
         }
 
+        const availabilityButton = event.target.closest('[data-toggle-slot-availability]');
+
+        if (availabilityButton) {
+            toggleSlotAvailability(availabilityButton);
+        }
+
         const reviewButton = event.target.closest('[data-review-status]');
 
         if (reviewButton) {
@@ -678,14 +684,14 @@ function renderTableState({ colspan, title, message, type = 'empty' }) {
 }
 
 function getPreRegistrationEmptyTitle() {
-    if (dashboardLoadFailed) return 'Unable to load pre-registrations';
-    if (adminRegistrations.length === 0) return 'No pre-registrations yet';
+    if (dashboardLoadFailed) return 'Unable to load requests';
+    if (adminRegistrations.length === 0) return 'No requests yet';
     return 'No matching pending requests';
 }
 
 function getPreRegistrationEmptyMessage() {
     if (dashboardLoadFailed) return 'Please check the backend connection, then refresh the dashboard.';
-    if (adminRegistrations.length === 0) return 'Student requests will appear here once they submit the pre-registration form.';
+    if (adminRegistrations.length === 0) return 'Student requests will appear here once they submit the registration form.';
     return 'Try adjusting the search term or sort option to find another pending request.';
 }
 
@@ -697,7 +703,7 @@ function getStudentsEmptyTitle() {
 
 function getStudentsEmptyMessage() {
     if (dashboardLoadFailed) return 'Please check the backend connection, then refresh the dashboard.';
-    if (adminRegistrations.length === 0) return 'Students will appear here after they submit at least one pre-registration request.';
+    if (adminRegistrations.length === 0) return 'Students will appear here after they submit at least one request.';
     return 'Try changing the search, course, or year level filters.';
 }
 
@@ -716,7 +722,7 @@ function renderOverviewRecentActivity(registrations = []) {
     const recentRegistrations = registrations.slice(0, 5);
 
     if (recentRegistrations.length === 0) {
-        container.innerHTML = '<div class="overview-empty">No pre-registration activity yet.</div>';
+        container.innerHTML = '<div class="overview-empty">No request activity yet.</div>';
         return;
     }
 
@@ -739,7 +745,7 @@ function renderOverviewAvailableSlots(timeSlots = []) {
     if (!container) return;
 
     const availableSlots = timeSlots
-        .filter(slot => !slot.isBreak && !slot.isFull && Number(slot.remainingSlots) > 0)
+        .filter(slot => slot.isActive && !slot.isBreak && !slot.isFull && Number(slot.remainingSlots) > 0)
         .slice(0, 4);
 
     if (availableSlots.length === 0) {
@@ -767,8 +773,8 @@ function renderOverviewQueueSummary(registrations = [], timeSlots = []) {
 
     const pendingCount = registrations.filter(registration => normalizeStatus(registration.status) === 'pending').length;
     const approvedCount = registrations.filter(registration => normalizeStatus(registration.status) === 'approved').length;
-    const fullSlotCount = timeSlots.filter(slot => !slot.isBreak && slot.isFull).length;
-    const availableSlotCount = timeSlots.filter(slot => !slot.isBreak && !slot.isFull && Number(slot.remainingSlots) > 0).length;
+    const fullSlotCount = timeSlots.filter(slot => slot.isActive && !slot.isBreak && slot.isFull).length;
+    const availableSlotCount = timeSlots.filter(slot => slot.isActive && !slot.isBreak && !slot.isFull && Number(slot.remainingSlots) > 0).length;
 
     container.innerHTML = `
         <div class="queue-summary-item">
@@ -932,19 +938,24 @@ function renderTimeSlots(timeSlots = []) {
                 `;
             }
 
+            const isActive = Boolean(slot.isActive);
             const isFull = Boolean(slot.isFull);
-            const statusText = isFull ? 'Full' : 'Available';
-            const statusClass = isFull ? 'status-pending' : 'status-approved';
+            const statusText = !isActive ? 'Unavailable' : isFull ? 'Full' : 'Available';
+            const statusClass = !isActive ? 'status-unavailable' : isFull ? 'status-pending' : 'status-approved';
             const bookedCount = Number(slot.bookedCount || 0);
             const capacity = Number(slot.capacity || 0);
             const occupancyRate = capacity === 0 ? 0 : Math.min(Math.round((bookedCount / capacity) * 100), 100);
+            const availabilityAction = isActive ? 'Disable' : 'Enable';
+            const countText = isActive
+                ? `${bookedCount} / ${capacity} students booked`
+                : `${bookedCount} booked - hidden from student booking`;
 
             return `
-                <div class="timeslot-card ${isFull ? 'is-full' : ''}">
+                <div class="timeslot-card ${isFull ? 'is-full' : ''} ${!isActive ? 'is-unavailable' : ''}">
                     <div class="timeslot-card-header">
                         <div>
                             <div class="timeslot-time">${escapeHtml(slot.slotLabel)}</div>
-                            <div class="timeslot-count">${bookedCount} / ${capacity} students booked</div>
+                            <div class="timeslot-count">${escapeHtml(countText)}</div>
                         </div>
                         <span class="status-badge ${statusClass}">${statusText}</span>
                     </div>
@@ -961,10 +972,46 @@ function renderTimeSlots(timeSlots = []) {
                         <span class="table-muted">${slot.remainingSlots} remaining</span>
                         <span class="table-muted">${occupancyRate}% occupied</span>
                     </div>
+                    <button class="btn btn-outline btn-sm timeslot-availability-btn" type="button" data-toggle-slot-availability="${slot.id}" data-slot-active="${isActive}">
+                        ${availabilityAction} Slot
+                    </button>
                 </div>
             `;
         })
         .join('');
+}
+
+async function toggleSlotAvailability(button) {
+    const slotId = button.getAttribute('data-toggle-slot-availability');
+    const currentlyActive = button.getAttribute('data-slot-active') === 'true';
+    const nextIsActive = !currentlyActive;
+    const originalText = button.textContent;
+
+    try {
+        button.disabled = true;
+        button.textContent = nextIsActive ? 'Enabling...' : 'Disabling...';
+
+        const response = await apiFetch(`/api/admin/time-slots/${slotId}/availability`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ isActive: nextIsActive })
+        });
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || 'Unable to update slot availability.');
+        }
+
+        await loadAdminDashboard();
+        showAdminToast(`Slot ${nextIsActive ? 'enabled' : 'disabled'}.`, 'success');
+    } catch (error) {
+        showAdminToast(error.message, 'error');
+    } finally {
+        button.disabled = false;
+        button.textContent = originalText;
+    }
 }
 
 async function saveSlotCapacity(button) {

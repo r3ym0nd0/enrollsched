@@ -39,6 +39,13 @@ const preRegistrationColumns = [
   }
 ];
 
+const timeSlotColumns = [
+  {
+    name: "is_active",
+    definition: "BOOLEAN NOT NULL DEFAULT TRUE AFTER capacity"
+  }
+];
+
 async function columnExists(connection, tableName, columnName) {
   const [rows] = await connection.execute(
     `
@@ -100,10 +107,22 @@ async function ensurePreRegistrationSchema(connection) {
   `);
 }
 
+async function ensureTimeSlotSchema(connection) {
+  for (const column of timeSlotColumns) {
+    const exists = await columnExists(connection, "time_slots", column.name);
+
+    if (!exists) {
+      await connection.query(`ALTER TABLE time_slots ADD COLUMN ${column.name} ${column.definition}`);
+      console.log(`Added missing time_slots.${column.name} column`);
+    }
+  }
+}
+
 async function ensureSchema() {
   const connection = await db.getConnection();
 
   try {
+    await ensureTimeSlotSchema(connection);
     await ensurePreRegistrationSchema(connection);
   } finally {
     connection.release();

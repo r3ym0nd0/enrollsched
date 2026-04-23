@@ -23,7 +23,7 @@ async function getTimeSlots(req, res) {
     LEFT JOIN pre_registrations pr
       ON pr.time_slot_id = ts.id
       AND pr.status IN ('pending', 'approved', 'confirmed')
-    WHERE ts.is_active = TRUE
+    WHERE TIME_TO_SEC(TIMEDIFF(ts.end_time, ts.start_time)) >= 3600
       OR ts.slot_label LIKE '%Lunch Break%'
     GROUP BY
       ts.id,

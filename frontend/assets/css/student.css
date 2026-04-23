@@ -1269,6 +1269,14 @@
     opacity: 0.72;
 }
 
+.timeslot-card.is-unavailable {
+    opacity: 0.72;
+}
+
+.timeslot-card.is-unavailable::before {
+    background: var(--gray-300);
+}
+
 .student-steps {
     list-style: none;
     padding: 0;
@@ -1537,6 +1545,11 @@
 .status-rejected {
   background: #fee2e2;
   color: #991b1b;
+}
+
+.status-unavailable {
+  background: var(--gray-100);
+  color: var(--gray-700);
 }
 
 .status-completed {
