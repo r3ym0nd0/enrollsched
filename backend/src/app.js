@@ -64,6 +64,22 @@ app.use(
   })
 );
 
+app.use("/api/admin", adminRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/pre-registrations", preRegistrationRoutes);
+app.use("/api/time-slots", timeSlotRoutes);
+
+app.get("/api/health", (req, res) => {
+  res.json({ status: "ok", service: "EnrollSched API" });
+});
+
+app.use("/api", (req, res) => {
+  res.status(404).json({
+    success: false,
+    message: `API route not found: ${req.method} ${req.originalUrl}`
+  });
+});
+
 app.get("/admin.html", requireAdmin, (req, res) => {
   res.sendFile(path.join(frontendPath, "admin.html"));
 });
@@ -82,11 +98,6 @@ app.get("/student", requireStudent, (req, res) => {
 
 app.use("/uploads/pre-registration", requireAdmin, express.static(uploadRoot));
 app.use(express.static(frontendPath));
-
-app.use("/api/admin", adminRoutes);
-app.use("/api/auth", authRoutes);
-app.use("/api/pre-registrations", preRegistrationRoutes);
-app.use("/api/time-slots", timeSlotRoutes);
 
 app.get("/health", (req, res) => {
   res.json({ status: "ok", service: "EnrollSched API" });
