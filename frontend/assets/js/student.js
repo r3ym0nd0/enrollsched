@@ -24,6 +24,40 @@ async function initStudentHistory() {
 
     if (historyCount) historyCount.textContent = `${result.data.length} entries`;
 
+    historyList.innerHTML = result.data.map((reg, index) => {
+      const status = reg.status || "pending";
+      const slot = reg.timeSlotLabel || reg.preferredTimeSlot || "Not selected";
+      const payment = formatPeso(reg.expectedPaymentAmount || 500);
+      const notes = reg.adminNotes || reg.rejectionReason || "";
+
+      return `
+        <article class="student-history-card">
+          <div class="student-history-card-header">
+            <div class="student-history-title-group">
+              <span class="student-history-icon" aria-hidden="true">#${index + 1}</span>
+              <div>
+                <strong>${escapeHtml(reg.course || "Course pending")}</strong>
+                <small>${escapeHtml(reg.yearLevel || "Year pending")} - ${escapeHtml(formatHistoryDate(reg.createdAt))}</small>
+              </div>
+            </div>
+            <span class="student-history-status status-${escapeHtml(status)}">${escapeHtml(formatStatus(status))}</span>
+          </div>
+          <div class="student-history-details">
+            <div>
+              <span>Time Slot</span>
+              <strong>${escapeHtml(slot)}</strong>
+            </div>
+            <div>
+              <span>Expected Payment</span>
+              <strong>${escapeHtml(payment)}</strong>
+            </div>
+          </div>
+          ${notes ? `<div class="student-history-notes"><span>Admin note</span>${escapeHtml(notes)}</div>` : ""}
+        </article>
+      `;
+    }).join("");
+    return;
+
     historyList.innerHTML = result.data.map(reg => `
       <div class="overview-card student-history-card">
         <div class="student-history-header">
@@ -54,6 +88,9 @@ initStudentHistory();
   const logoutModalOverlay = document.getElementById("logoutModalOverlay");
   const confirmLogoutBtn = document.querySelector("[data-confirm-logout]");
   const cancelLogoutBtn = document.querySelector("[data-cancel-logout]");
+  const closeDecisionBtn = document.querySelector("[data-close-decision]");
+  const decisionActionBtn = document.querySelector("[data-decision-action]");
+  const decisionModalOverlay = document.getElementById("decisionModalOverlay");
   const sectionLinks = document.querySelectorAll("[data-student-section-link]");
 
   if (logoutBtn) {
@@ -70,6 +107,18 @@ initStudentHistory();
 
   if (logoutModalOverlay) {
     logoutModalOverlay.addEventListener("click", closeLogoutModal);
+  }
+
+  if (closeDecisionBtn) {
+    closeDecisionBtn.addEventListener("click", closeDecisionModal);
+  }
+
+  if (decisionActionBtn) {
+    decisionActionBtn.addEventListener("click", handleDecisionModalAction);
+  }
+
+  if (decisionModalOverlay) {
+    decisionModalOverlay.addEventListener("click", closeDecisionModal);
   }
 
   if (startRegistrationBtn) {
@@ -90,6 +139,7 @@ initStudentHistory();
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
       closeLogoutModal();
+      closeDecisionModal();
       closeStudentNotifications();
       closeStudentSearch();
     }
@@ -103,29 +153,89 @@ initStudentHistory();
       setActiveStudentSectionLink(document.querySelector('[href="#preRegistrationSection"]'));
     }
   });
+
+  window.addEventListener("focus", refreshStudentRegistrationDecision);
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      refreshStudentRegistrationDecision();
+    }
+  });
+  setInterval(refreshStudentRegistrationDecision, 30000);
 });
 
 let availableSlots = [];
 let currentRegistration = null;
+let studentNotifications = [];
+const studentNotificationsSeenKey = "enrollsched.studentNotifications.seen";
+const studentDecisionSeenKey = "enrollsched.studentDecision.seen";
+
+const studentSearchItems = [
+  {
+    title: "Overview",
+    description: "View your status, stats, reminders, and quick actions.",
+    keywords: ["overview", "home", "dashboard", "status", "stats", "reminder"],
+    target: "#studentOverviewSection"
+  },
+  {
+    title: "Register",
+    description: "Submit or update your enrollment visit request.",
+    keywords: ["register", "registration", "form", "com", "receipt", "payment", "evidence", "requirements"],
+    target: "#preRegistrationSection"
+  },
+  {
+    title: "Schedule",
+    description: "Check available time slots and slot capacity.",
+    keywords: ["schedule", "slot", "time", "available", "availability", "full", "capacity", "seat"],
+    target: "#studentScheduleSection"
+  },
+  {
+    title: "History",
+    description: "Review previous registration submissions and statuses.",
+    keywords: ["history", "records", "record", "previous", "approved", "rejected", "pending"],
+    target: "#studentHistorySection"
+  },
+  {
+    title: "Notifications",
+    description: "Open registration updates and reminders.",
+    keywords: ["notification", "notifications", "update", "updates", "bell", "alert"],
+    action: "notifications"
+  }
+];
 
 function initStudentNotifications() {
   const button = document.getElementById("studentNotificationBtn");
   const panel = document.getElementById("studentNotificationPanel");
+  const list = panel?.querySelector(".student-notification-list");
 
   if (!button || !panel) return;
 
   button.addEventListener("click", (event) => {
     event.stopPropagation();
     closeStudentSearch();
+    renderStudentNotifications();
     const isOpen = panel.classList.toggle("active");
     panel.setAttribute("aria-hidden", String(!isOpen));
     button.setAttribute("aria-expanded", String(isOpen));
+
+    if (isOpen) {
+      markStudentNotificationsSeen();
+      renderStudentNotifications();
+    }
+  });
+
+  list?.addEventListener("click", (event) => {
+    const item = event.target.closest("[data-student-notification-index]");
+
+    if (!item) return;
+
+    executeStudentNotification(studentNotifications[Number(item.dataset.studentNotificationIndex)]);
   });
 
   panel.addEventListener("click", (event) => {
     event.stopPropagation();
   });
 
+  renderStudentNotifications();
   document.addEventListener("click", closeStudentNotifications);
 }
 
@@ -140,12 +250,163 @@ function closeStudentNotifications() {
   button.setAttribute("aria-expanded", "false");
 }
 
+function getStudentNotifications() {
+  const notifications = [];
+  const bookableSlots = availableSlots.filter((slot) => Boolean(slot.isActive) && !Boolean(slot.isBreak));
+  const openSlots = bookableSlots.filter((slot) => !Boolean(slot.isFull));
+  const uploadedProofs = [
+    currentRegistration?.comEvidencePath,
+    currentRegistration?.receiptEvidencePath
+  ].filter(Boolean).length;
+
+  if (!currentRegistration) {
+    notifications.push({
+      title: "Start your registration",
+      message: "Submit your details and choose an enrollment visit slot.",
+      meta: "Action needed",
+      target: "#preRegistrationSection",
+      unread: true
+    });
+  } else if (currentRegistration.status === "rejected") {
+    notifications.push({
+      title: "Registration needs update",
+      message: currentRegistration.rejectionReason || "Your request was rejected. Review and resubmit your details.",
+      meta: "Admin review",
+      target: "#preRegistrationSection",
+      unread: true
+    });
+  } else if (["approved", "confirmed"].includes(currentRegistration.status)) {
+    notifications.push({
+      title: "Registration approved",
+      message: `Prepare for your scheduled visit: ${currentRegistration.preferredTimeSlot || currentRegistration.slotLabel || "selected slot"}.`,
+      meta: "Approved",
+      target: "#studentScheduleSection",
+      unread: true
+    });
+  } else {
+    notifications.push({
+      title: "Registration under review",
+      message: "Your request is waiting for admin checking.",
+      meta: "Pending",
+      target: "#preRegistrationSection",
+      unread: true
+    });
+  }
+
+  if (currentRegistration && uploadedProofs < 2) {
+    notifications.push({
+      title: "Evidence upload reminder",
+      message: "Add COM and receipt images if available to help staff review faster.",
+      meta: `${uploadedProofs}/2 uploaded`,
+      target: "#preRegistrationSection",
+      unread: uploadedProofs === 0
+    });
+  }
+
+  if (openSlots.length > 0) {
+    const seatsLeft = openSlots.reduce((total, slot) => total + Number(slot.remainingSlots || 0), 0);
+
+    notifications.push({
+      title: "Slots are available",
+      message: `${openSlots.length} slot${openSlots.length === 1 ? "" : "s"} open with ${seatsLeft} total seat${seatsLeft === 1 ? "" : "s"} left.`,
+      meta: "Schedule",
+      target: "#studentScheduleSection",
+      unread: false
+    });
+  }
+
+  return notifications;
+}
+
+function renderStudentNotifications() {
+  const panel = document.getElementById("studentNotificationPanel");
+  const badge = document.querySelector(".student-notification-badge");
+  const headerMeta = panel?.querySelector(".student-notification-header small");
+  const list = panel?.querySelector(".student-notification-list");
+
+  if (!panel || !list) return;
+
+  studentNotifications = getStudentNotifications();
+  const unseenCount = getUnseenStudentNotificationCount(studentNotifications);
+
+  if (badge) {
+    badge.textContent = String(unseenCount);
+    badge.hidden = unseenCount === 0;
+  }
+
+  if (headerMeta) {
+    headerMeta.textContent = studentNotifications.length
+      ? `${studentNotifications.length} update${studentNotifications.length === 1 ? "" : "s"}`
+      : "Clear";
+  }
+
+  if (studentNotifications.length === 0) {
+    list.innerHTML = `
+      <div class="student-notification-empty">
+        <strong>No updates right now</strong>
+        <p>Important registration and schedule updates will appear here.</p>
+      </div>
+    `;
+    return;
+  }
+
+  list.innerHTML = studentNotifications
+    .map((notification, index) => `
+      <button class="student-notification-item ${notification.unread && unseenCount > 0 ? "is-unread" : ""}" type="button" data-student-notification-index="${index}">
+        <span></span>
+        <div>
+          <strong>${escapeHtml(notification.title)}</strong>
+          <p>${escapeHtml(notification.message)}</p>
+          <small>${escapeHtml(notification.meta)}</small>
+        </div>
+      </button>
+    `)
+    .join("");
+}
+
+function getStudentNotificationSignature(notifications = studentNotifications) {
+  return notifications
+    .map((notification) => `${notification.title}|${notification.message}|${notification.meta}`)
+    .join("::");
+}
+
+function getUnseenStudentNotificationCount(notifications = studentNotifications) {
+  if (notifications.length === 0) return 0;
+
+  const signature = getStudentNotificationSignature(notifications);
+
+  if (localStorage.getItem(studentNotificationsSeenKey) === signature) {
+    return 0;
+  }
+
+  const unreadCount = notifications.filter((notification) => notification.unread).length;
+  return unreadCount || notifications.length;
+}
+
+function markStudentNotificationsSeen() {
+  if (studentNotifications.length === 0) return;
+
+  localStorage.setItem(
+    studentNotificationsSeenKey,
+    getStudentNotificationSignature(studentNotifications)
+  );
+}
+
+function executeStudentNotification(notification) {
+  if (!notification?.target) return;
+
+  showStudentView(notification.target);
+  setActiveStudentSectionLink(document.querySelector(`[href="${notification.target}"]`));
+  closeStudentNotifications();
+}
+
 function initStudentSearch() {
   const wrapper = document.getElementById("studentSearchWrapper");
   const toggle = document.getElementById("studentSearchToggle");
   const input = document.getElementById("studentPortalSearch");
+  const resultsPanel = document.getElementById("studentSearchResults");
 
-  if (!wrapper || !toggle || !input) return;
+  if (!wrapper || !toggle || !input || !resultsPanel) return;
 
   toggle.addEventListener("click", (event) => {
     event.stopPropagation();
@@ -155,6 +416,8 @@ function initStudentSearch() {
     if (isOpen) {
       closeStudentNotifications();
       setTimeout(() => input.focus(), 0);
+    } else {
+      clearStudentSearchResults();
     }
   });
 
@@ -163,6 +426,10 @@ function initStudentSearch() {
   });
 
   document.addEventListener("click", closeStudentSearch);
+
+  input.addEventListener("input", () => {
+    renderStudentSearchResults(input.value);
+  });
 
   input.addEventListener("keydown", (event) => {
     if (event.key !== "Enter") return;
@@ -174,11 +441,16 @@ function initStudentSearch() {
 function closeStudentSearch() {
   const wrapper = document.getElementById("studentSearchWrapper");
   const toggle = document.getElementById("studentSearchToggle");
+  const resultsPanel = document.getElementById("studentSearchResults");
 
-  if (!wrapper || !toggle || !wrapper.classList.contains("active")) return;
+  if (!wrapper || !toggle) return;
 
   wrapper.classList.remove("active");
   toggle.setAttribute("aria-expanded", "false");
+
+  if (resultsPanel) {
+    clearStudentSearchResults();
+  }
 }
 
 function handleStudentSearch(query) {
@@ -186,36 +458,113 @@ function handleStudentSearch(query) {
 
   if (!normalizedQuery) return;
 
-  if (["notification", "notifications", "update", "updates"].some((term) => normalizedQuery.includes(term))) {
+  const [bestResult] = getStudentSearchResults(normalizedQuery);
+
+  if (bestResult) {
+    executeStudentSearchResult(bestResult);
+    return;
+  }
+
+  renderStudentSearchResults(normalizedQuery, true);
+}
+
+function getStudentSearchResults(query = "") {
+  const normalizedQuery = String(query || "").trim().toLowerCase();
+
+  if (!normalizedQuery) {
+    return studentSearchItems.slice(0, 4);
+  }
+
+  return studentSearchItems
+    .map((item) => {
+      const haystack = [item.title, item.description, ...(item.keywords || [])]
+        .join(" ")
+        .toLowerCase();
+      const startsWithTitle = item.title.toLowerCase().startsWith(normalizedQuery);
+      const keywordMatch = item.keywords?.some((keyword) => keyword.includes(normalizedQuery));
+      const textMatch = haystack.includes(normalizedQuery);
+
+      if (!startsWithTitle && !keywordMatch && !textMatch) return null;
+
+      return {
+        ...item,
+        score: Number(startsWithTitle) * 3 + Number(keywordMatch) * 2 + Number(textMatch)
+      };
+    })
+    .filter(Boolean)
+    .sort((first, second) => second.score - first.score)
+    .slice(0, 5);
+}
+
+function renderStudentSearchResults(query = "", showNoResults = false) {
+  const resultsPanel = document.getElementById("studentSearchResults");
+
+  if (!resultsPanel) return;
+
+  if (!String(query || "").trim()) {
+    clearStudentSearchResults();
+    return;
+  }
+
+  const results = getStudentSearchResults(query);
+
+  if (results.length === 0 && showNoResults) {
+    resultsPanel.innerHTML = `
+      <div class="student-search-empty">
+        <strong>No result found</strong>
+        <span>Try searching register, schedule, history, COM, receipt, or payment.</span>
+      </div>
+    `;
+    resultsPanel.classList.add("active");
+    return;
+  }
+
+  if (results.length === 0) {
+    resultsPanel.classList.remove("active");
+    resultsPanel.innerHTML = "";
+    return;
+  }
+
+  resultsPanel.innerHTML = results
+    .map((result, index) => `
+      <button class="student-search-result" type="button" data-student-search-index="${index}">
+        <span>${escapeHtml(result.title)}</span>
+      </button>
+    `)
+    .join("");
+  resultsPanel.classList.add("active");
+
+  resultsPanel.querySelectorAll("[data-student-search-index]").forEach((button) => {
+    button.addEventListener("click", () => {
+      executeStudentSearchResult(results[Number(button.dataset.studentSearchIndex)]);
+    });
+  });
+}
+
+function clearStudentSearchResults() {
+  const resultsPanel = document.getElementById("studentSearchResults");
+
+  if (!resultsPanel) return;
+
+  resultsPanel.classList.remove("active");
+  resultsPanel.innerHTML = "";
+}
+
+function executeStudentSearchResult(result) {
+  if (!result) return;
+
+  if (result.action === "notifications") {
     closeStudentSearch();
     document.getElementById("studentNotificationBtn")?.click();
     return;
   }
 
-  const registerTerms = ["register", "registration", "com", "receipt", "payment", "evidence", "form"];
-  const scheduleTerms = ["schedule", "slot", "time", "available", "availability", "full"];
-  const overviewTerms = ["overview", "home", "dashboard"];
-
-  if (registerTerms.some((term) => normalizedQuery.includes(term))) {
-    showStudentView("#preRegistrationSection");
-    setActiveStudentSectionLink(document.querySelector('[href="#preRegistrationSection"]'));
-    closeStudentSearch();
-    return;
+  if (result.target) {
+    showStudentView(result.target);
+    setActiveStudentSectionLink(document.querySelector(`[href="${result.target}"]`));
   }
 
-  if (scheduleTerms.some((term) => normalizedQuery.includes(term))) {
-    showStudentView("#studentScheduleSection");
-    setActiveStudentSectionLink(document.querySelector('[href="#studentScheduleSection"]'));
-    closeStudentSearch();
-    return;
-  }
-
-  if (overviewTerms.some((term) => normalizedQuery.includes(term))) {
-    showStudentView("#studentOverviewSection");
-    setActiveStudentSectionLink(document.querySelector('[href="#studentOverviewSection"]'));
-    closeStudentSearch();
-    return;
-  }
+  closeStudentSearch();
 }
 
 function initStudentSidebar() {
@@ -385,6 +734,92 @@ function closeLogoutModal() {
   document.body.style.overflow = "";
 }
 
+function maybeShowRegistrationDecision(registration) {
+  if (!registration || !["approved", "confirmed", "rejected"].includes(registration.status)) return;
+
+  const decisionKey = getRegistrationDecisionKey(registration);
+
+  if (localStorage.getItem(studentDecisionSeenKey) === decisionKey) return;
+
+  openDecisionModal(registration);
+}
+
+function getRegistrationDecisionKey(registration) {
+  return [
+    registration.id,
+    registration.status,
+    registration.rejectionReason || "",
+    registration.preferredTimeSlot || registration.slotLabel || ""
+  ].join("|");
+}
+
+function openDecisionModal(registration) {
+  const modal = document.getElementById("decisionModal");
+  const overlay = document.getElementById("decisionModalOverlay");
+  const icon = document.getElementById("decisionModalIcon");
+  const kicker = document.getElementById("decisionModalKicker");
+  const title = document.getElementById("decisionModalTitle");
+  const message = document.getElementById("decisionModalMessage");
+  const details = document.getElementById("decisionModalDetails");
+  const actionButton = document.querySelector("[data-decision-action]");
+
+  if (!modal || !overlay || !title || !message || !details || !actionButton) return;
+
+  const isRejected = registration.status === "rejected";
+  const schedule = registration.preferredTimeSlot || registration.slotLabel || "your selected slot";
+
+  modal.dataset.registrationDecisionKey = getRegistrationDecisionKey(registration);
+  modal.dataset.decisionTarget = isRejected ? "#preRegistrationSection" : "#studentScheduleSection";
+  modal.classList.toggle("is-rejected", isRejected);
+  modal.classList.toggle("is-approved", !isRejected);
+
+  if (kicker) kicker.textContent = isRejected ? "Needs update" : "Approved request";
+  title.textContent = isRejected ? "Your registration needs an update" : "Your registration was approved";
+  message.textContent = isRejected
+    ? "Please review the admin feedback and update your registration request."
+    : "Your enrollment visit request has been approved. Please arrive during your selected schedule.";
+  details.innerHTML = isRejected
+    ? `<span>Reason</span><strong>${escapeHtml(registration.rejectionReason || "Please review your submitted details.")}</strong>`
+    : `<span>Schedule</span><strong>${escapeHtml(schedule)}</strong>`;
+  actionButton.textContent = isRejected ? "Update Register" : "View Schedule";
+
+  icon?.setAttribute("aria-label", isRejected ? "Rejected registration" : "Approved registration");
+  modal.classList.add("active");
+  overlay.classList.add("active");
+  modal.setAttribute("aria-hidden", "false");
+  overlay.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+}
+
+function closeDecisionModal() {
+  const modal = document.getElementById("decisionModal");
+  const overlay = document.getElementById("decisionModalOverlay");
+
+  if (!modal || !overlay || !modal.classList.contains("active")) return;
+
+  if (modal.dataset.registrationDecisionKey) {
+    localStorage.setItem(studentDecisionSeenKey, modal.dataset.registrationDecisionKey);
+  }
+
+  modal.classList.remove("active");
+  overlay.classList.remove("active");
+  modal.setAttribute("aria-hidden", "true");
+  overlay.setAttribute("aria-hidden", "true");
+  document.body.style.overflow = "";
+}
+
+function handleDecisionModalAction() {
+  const modal = document.getElementById("decisionModal");
+  const target = modal?.dataset.decisionTarget;
+
+  closeDecisionModal();
+
+  if (!target) return;
+
+  showStudentView(target);
+  setActiveStudentSectionLink(document.querySelector(`[href="${target}"]`));
+}
+
 async function initPreRegistration() {
   const form = document.getElementById("preRegistrationForm");
 
@@ -413,6 +848,7 @@ async function loadTimeSlots() {
     renderTimeSlotSelect(slotSelect, availableSlots);
     renderTimeSlotCards(slotGrid, availableSlots);
     renderStudentOverview();
+    renderStudentNotifications();
   } catch (error) {
     if (slotSelect) {
       slotSelect.innerHTML = '<option value="">Unable to load slots</option>';
@@ -428,6 +864,7 @@ async function loadTimeSlots() {
     }
 
     renderStudentOverview();
+    renderStudentNotifications();
   }
 }
 
@@ -515,7 +952,7 @@ function renderTimeSlotCards(slotGrid, slots) {
     .join("");
 }
 
-async function loadMyPreRegistration() {
+async function loadMyPreRegistration({ silent = false } = {}) {
   try {
     const response = await apiFetch("/api/pre-registrations/me");
     const data = await response.json();
@@ -529,13 +966,24 @@ async function loadMyPreRegistration() {
       prefillPreRegistrationForm(data.registration);
       renderConfirmation(data.registration);
       setFormMode("update");
+    } else {
+      currentRegistration = null;
     }
 
     renderStudentOverview();
+    renderStudentNotifications();
+    maybeShowRegistrationDecision(data.registration);
   } catch (error) {
-    setPreRegistrationMessage(error.message, "error");
+    if (!silent) {
+      setPreRegistrationMessage(error.message, "error");
+    }
     renderStudentOverview();
+    renderStudentNotifications();
   }
+}
+
+async function refreshStudentRegistrationDecision() {
+  await loadMyPreRegistration({ silent: true });
 }
 
 async function submitPreRegistration(event) {
@@ -571,6 +1019,7 @@ async function submitPreRegistration(event) {
     await loadTimeSlots();
     prefillPreRegistrationForm(data.registration);
     renderStudentOverview();
+    renderStudentNotifications();
     setPreRegistrationMessage(
       isUpdate
         ? "Registration request updated and sent back for admin review."
@@ -605,14 +1054,13 @@ function renderStudentOverviewStats() {
   const bookableSlots = availableSlots.filter((slot) => Boolean(slot.isActive) && !Boolean(slot.isBreak));
   const openSlots = bookableSlots.filter((slot) => !Boolean(slot.isFull));
   const seatsLeft = bookableSlots.reduce((total, slot) => total + Number(slot.remainingSlots || 0), 0);
-  const expectedPayment = Number(currentRegistration?.expectedPaymentAmount || 500);
   const uploadedProofs = [currentRegistration?.comEvidencePath, currentRegistration?.receiptEvidencePath]
     .filter(Boolean)
     .length;
 
   if (openSlotsCount) openSlotsCount.textContent = String(openSlots.length);
   if (seatsLeftCount) seatsLeftCount.textContent = String(seatsLeft);
-  if (minimumFeeCount) minimumFeeCount.textContent = String(expectedPayment || 500);
+  if (minimumFeeCount) minimumFeeCount.textContent = "500";
   if (proofsUploadedCount) proofsUploadedCount.textContent = String(uploadedProofs);
 }
 
@@ -866,6 +1314,18 @@ function titleCase(value) {
 function formatStatus(value) {
   if (value === "confirmed") return "Approved";
   return titleCase(value);
+}
+
+function formatHistoryDate(value) {
+  if (!value) return "Date pending";
+
+  return new Date(value).toLocaleString("en-PH", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit"
+  });
 }
 
 function escapeHtml(value = "") {

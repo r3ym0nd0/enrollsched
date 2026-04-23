@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Dashboard | EnrollSched</title>
+    <title>EnrollSched - Student Dashboard</title>
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/auth.css">
     <link rel="stylesheet" href="assets/css/admin.css">
@@ -12,7 +12,7 @@
 </head>
 <body>
 
-    <nav class="admin-navbar">
+    <nav class="admin-navbar student-navbar">
         <button class="mobile-menu-btn" id="sidebarToggleBtn" aria-label="Open student menu" aria-expanded="false" aria-controls="studentSidebar">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="3" y1="12" x2="21" y2="12"/>
@@ -21,14 +21,15 @@
             </svg>
         </button>
 
+        <a class="student-nav-brand" href="#studentOverviewSection" aria-label="Go to student overview">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1e40af" stroke-width="2">
+                <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+            </svg>
+            <span>EnrollSched</span>
+        </a>
+
         <div class="admin-nav-right">
-            <div class="admin-nav-status student-nav-status">
-                <div class="admin-current-view">
-                    <span class="admin-current-dot"></span>
-                    <span>Student Portal</span>
-                </div>
-                <div class="admin-date-pill" id="studentDatePill">Today</div>
-            </div>
             <div class="student-search-wrapper" id="studentSearchWrapper">
                 <button class="student-search-toggle" id="studentSearchToggle" type="button" aria-label="Open portal search" aria-expanded="false" aria-controls="studentPortalSearch">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -44,6 +45,7 @@
                     <input id="studentPortalSearch" type="search" placeholder="Search portal..." autocomplete="off">
                     <span>Enter</span>
                 </label>
+                <div class="student-search-results" id="studentSearchResults" aria-live="polite"></div>
             </div>
             <div class="student-notification-wrapper">
                 <button class="student-notification-btn" id="studentNotificationBtn" type="button" aria-label="Open notifications" aria-expanded="false" aria-controls="studentNotificationPanel">
@@ -159,15 +161,6 @@
                     History
                 </a>
             </li>
-            <li class="sidebar-item">
-                <a href="#" class="sidebar-link">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                        <circle cx="12" cy="7" r="4"/>
-                    </svg>
-                    Profile
-                </a>
-            </li>
         </ul>
 
         <div class="sidebar-footer">
@@ -220,9 +213,9 @@
                                 <path d="M3 10h18"/>
                             </svg>
                         </div>
-                        <span>Open Slots</span>
                     </div>
                     <strong id="studentOpenSlotsCount">0</strong>
+                    <span>Slots</span>
                 </div>
                 <div class="student-stat-card">
                     <div class="student-stat-header">
@@ -233,9 +226,9 @@
                                 <path d="M21 21v-2a3 3 0 0 0-2-2.83"/>
                             </svg>
                         </div>
-                        <span>Seats Left</span>
                     </div>
                     <strong id="studentSeatsLeftCount">0</strong>
+                    <span>Seats</span>
                 </div>
                 <div class="student-stat-card">
                     <div class="student-stat-header">
@@ -247,9 +240,9 @@
                                 <path d="M12 10v4"/>
                             </svg>
                         </div>
-                        <span>Minimum Fee</span>
                     </div>
                     <strong id="studentMinimumFeeCount">500</strong>
+                    <span>Minimum</span>
                 </div>
                 <div class="student-stat-card">
                     <div class="student-stat-header">
@@ -260,9 +253,9 @@
                                 <path d="m9 15 2 2 4-5"/>
                             </svg>
                         </div>
-                        <span>Proofs Uploaded</span>
                     </div>
                     <strong id="studentProofsUploadedCount">0</strong>
+                    <span>Proofs</span>
                 </div>
             </div>
 
@@ -561,6 +554,27 @@
     </main>
 
     <div class="logout-modal-overlay" id="logoutModalOverlay" aria-hidden="true"></div>
+    <div class="decision-modal-overlay" id="decisionModalOverlay" aria-hidden="true"></div>
+    <section class="decision-modal" id="decisionModal" role="dialog" aria-modal="true" aria-labelledby="decisionModalTitle" aria-hidden="true">
+        <div class="decision-modal-card">
+            <div class="decision-modal-icon" id="decisionModalIcon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 6 9 17l-5-5"/>
+                </svg>
+            </div>
+            <div>
+                <span class="decision-modal-kicker" id="decisionModalKicker">Admin decision</span>
+                <h2 id="decisionModalTitle">Registration update</h2>
+                <p id="decisionModalMessage">Your registration request has an update.</p>
+            </div>
+            <div class="decision-modal-details" id="decisionModalDetails"></div>
+            <div class="decision-modal-actions">
+                <button class="btn btn-outline btn-sm" type="button" data-close-decision>Later</button>
+                <button class="btn btn-primary btn-sm" type="button" data-decision-action>View Details</button>
+            </div>
+        </div>
+    </section>
+
     <section class="logout-modal" id="logoutModal" role="dialog" aria-modal="true" aria-labelledby="logoutModalTitle" aria-hidden="true">
         <div class="logout-modal-card">
             <div class="logout-modal-icon">
